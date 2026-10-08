@@ -74,6 +74,15 @@
                    0px -1px 0 #000, 0px 1px 0 #000, -1px 0px 0 #000, 1px 0px 0 #000;
     }
 
+    /* Glassy frosted card effect matching updated GUI style */
+    .glass-card {
+      background: rgba(16, 16, 16, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
     /* Force global application of Gnf font across all elements except exempted headers */
     html, body, div, span, p, a, button, input, label, aside, nav {
       font-family: 'Gnf', 'Inter', system-ui, sans-serif;
@@ -93,11 +102,6 @@
       background-color: #050505;
     }
 
-    /* Active Indicator Line Smooth Sliding Transition */
-    .indicator-line {
-      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease;
-    }
-
     @keyframes fastPartialFade {
       0% { opacity: 1; transform: scale(1); }
       35% { opacity: 0.22; transform: scale(0.988); }
@@ -109,7 +113,7 @@
     }
 
     input::placeholder {
-      color: #555555;
+      color: #666666;
       font-family: 'Gnf', 'Inter', sans-serif;
     }
   </style>
@@ -125,76 +129,57 @@
     <div id="wallpaperLayer" class="absolute inset-0 hidden overflow-hidden"></div>
   </div>
 
-  <!-- NEWS MODAL (Using smooth rounded box for close button) -->
+  <!-- NEWS MODAL -->
   <div id="newsModal" class="fixed inset-0 bg-black/40 backdrop-blur-[1px] z-[100] flex items-center justify-center hidden">
     <div class="w-full max-w-md bg-[#121212] border border-[#2a2a2a] rounded-2xl p-6 shadow-2xl flex flex-col relative text-left">
       <button id="closeNewsBtn" class="absolute top-4 right-4 w-7 h-7 bg-[#1a1a1a] hover:bg-[#252525] border border-[#333333] rounded-md flex items-center justify-center text-white text-xs font-bold transition-colors cursor-pointer">
         ✕
       </button>
       <div class="text-xs font-bold tracking-[0.2em] text-mono-300 uppercase mb-4 flex items-center gap-2">
-        <span class="w-2.5 h-2.5 rounded-sm bg-white inline-block"></span> UPDATES
+        <span class="w-2.5 h-2.5 rounded-sm bg-white inline-block"></span> UPDATE 
       </div>
       <div id="newsContentList" class="text-xs text-mono-300 space-y-4 max-h-60 overflow-y-auto pr-2 font-sans">
         <div>
-          <span class="text-white font-bold mb-1 flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-white inline-block"></span> Games Added:</span>
+          <span class="text-white font-bold mb-1 flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-white inline-block"></span> Update</span>
           <ul class="list-disc list-inside space-y-1 text-mono-400 pl-4">
-            <li>60 Seconds Burger Run</li>
-            <li>Melon Playground</li>
-            <li>MotoX3m Pool Party</li>
-            <li>Brawl Simulator 3D</li>
-            <li>Cheese Rolling</li>
-            <li>Fork n Sausage</li>
-            <li>Monster Tracks</li>
-            <li>n-gon</li>
-            <li>Phoenix Wright - Ace Attorney - Trials and Tribulations</li>
-            <li>Power Hover</li>
-             <li>And More</li>
+            <li>Brand new profiles</li>
+          <li>gui update</li>
           </ul>
-        </div>
-        <div>
-          <span class="text-white font-bold mb-1 flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-white inline-block"></span> App Added:</span>
-          <p class="text-mono-400 pl-4">none</p>
-        </div>
-        <div>
-          <span class="text-white font-bold mb-1 flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-sm bg-white inline-block"></span> Bugs That Have Been Fixed:</span>
-          <p class="text-mono-400 pl-4">none</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 100% Viewport Height Sidebar -->
-  <aside id="sidebar" class="h-screen w-[60px] bg-[#0a0a0a] border-r border-[#1a1a1a] flex flex-col justify-between items-center py-4 relative z-50 select-none shrink-0">
-    
-    <div id="activeIndicator" class="indicator-line absolute left-0 w-[3px] h-[20px] bg-white rounded-r-full z-40 pointer-events-none shadow-[0_0_10px_rgba(255,255,255,0.8)]" style="top: 0px; transform: translateY(0px);"></div>
+  <!-- 100% Viewport Height Sidebar (w-[52px]) -->
+  <aside id="sidebar" class="h-screen w-[52px] bg-[#0a0a0a] border-r border-[#1a1a1a] flex flex-col justify-between items-center py-4 relative z-50 select-none shrink-0">
 
     <!-- UPPER SECTION -->
     <div class="w-full flex flex-col items-center">
       <nav class="w-full flex flex-col items-center gap-1.5 px-1" aria-label="Primary Navigation">
         
         <!-- 1. HOME -->
-        <button data-nav-id="home" data-subtitle="HOME" data-index="0" class="nav-btn group relative w-9 h-9 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Home">
-          <img src="https://img.icons8.com/?size=100&id=1iF9PyJ2Thzo&format=png&color=FFFFFF" alt="Home" class="w-[14px] h-[14px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'home')">
+        <button data-nav-id="home" data-subtitle="HOME" data-index="0" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Home">
+          <img src="https://img.icons8.com/?size=100&id=1iF9PyJ2Thzo&format=png&color=FFFFFF" alt="Home" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'home')">
         </button>
 
         <!-- 2. GAMES -->
-        <button data-nav-id="games" data-subtitle="GAMES" data-index="1" class="nav-btn group relative w-9 h-9 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Games">
-          <img src="https://img.icons8.com/?size=100&id=GFDbOB2OqPWt&format=png&color=FFFFFF" alt="Games" class="w-[14px] h-[14px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'games')">
+        <button data-nav-id="games" data-subtitle="GAMES" data-index="1" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Games">
+          <img src="https://img.icons8.com/?size=100&id=GFDbOB2OqPWt&format=png&color=FFFFFF" alt="Games" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'games')">
         </button>
 
         <!-- 3. MUSIC -->
-        <button data-nav-id="music" data-subtitle="MUSIC" data-index="2" class="nav-btn group relative w-9 h-9 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Music">
-          <img src="https://img.icons8.com/?size=100&id=cpC9tCaQDyxh&format=png&color=FFFFFF" alt="Music" class="w-[14px] h-[14px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'music')">
+        <button data-nav-id="music" data-subtitle="MUSIC" data-index="2" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Music">
+          <img src="https://img.icons8.com/?size=100&id=cpC9tCaQDyxh&format=png&color=FFFFFF" alt="Music" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'music')">
         </button>
 
         <!-- 4. MOVIES -->
-        <button data-nav-id="movies" data-subtitle="MOVIES" data-index="3" class="nav-btn group relative w-9 h-9 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Movies">
-          <img src="https://img.icons8.com/?size=100&id=xmdB5b5JmqRr&format=png&color=FFFFFF" alt="Movies" class="w-[14px] h-[14px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'movies')">
+        <button data-nav-id="movies" data-subtitle="MOVIES" data-index="3" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Movies">
+          <img src="https://img.icons8.com/?size=100&id=xmdB5b5JmqRr&format=png&color=FFFFFF" alt="Movies" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'movies')">
         </button>
 
         <!-- 5. ANIME -->
-        <button data-nav-id="anime" data-subtitle="ANIME" data-index="4" class="nav-btn group relative w-9 h-9 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Anime">
-          <img src="https://img.icons8.com/?size=100&id=RHbEtcSp-frn&format=png&color=FFFFFF" alt="Anime" class="w-[14px] h-[14px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'anime')">
+        <button data-nav-id="anime" data-subtitle="ANIME" data-index="4" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Anime">
+          <img src="https://img.icons8.com/?size=100&id=RHbEtcSp-frn&format=png&color=FFFFFF" alt="Anime" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'anime')">
         </button>
       </nav>
     </div>
@@ -202,15 +187,15 @@
     <!-- LOWER SECTION -->
     <div class="w-full flex flex-col items-center px-1 mt-auto relative gap-1.5">
       
-      <div class="w-6 h-[1px] bg-[#222222] rounded-full"></div>
+      <div class="w-5 h-[1px] bg-[#222222] rounded-full"></div>
 
       <!-- COMPACT MUSIC THUMBNAIL BOX -->
       <div id="musicThumbContainer" class="relative flex justify-center w-full hidden">
-        <div id="musicThumbBox" class="w-7 h-7 bg-[#141414] border border-[#2a2a2a] rounded-md overflow-hidden flex items-center justify-center cursor-pointer hover:border-mono-400 transition-colors">
-          <img id="sidebarMusicImg" src="https://img.icons8.com/?size=100&id=cpC9tCaQDyxh&format=png&color=FFFFFF" alt="Now Playing" class="w-4 h-4 object-cover rounded">
+        <div id="musicThumbBox" class="w-6 h-6 bg-[#141414] border border-[#2a2a2a] rounded-md overflow-hidden flex items-center justify-center cursor-pointer hover:border-mono-400 transition-colors">
+          <img id="sidebarMusicImg" src="https://img.icons8.com/?size=100&id=cpC9tCaQDyxh&format=png&color=FFFFFF" alt="Now Playing" class="w-3.5 h-3.5 object-cover rounded">
         </div>
 
-        <div id="musicControlsPanel" class="absolute left-[64px] top-1/2 -translate-y-1/2 bg-[#121212] border border-[#2a2a2a] rounded-md shadow-2xl p-1.5 hidden items-center gap-1.5 z-50 whitespace-nowrap">
+        <div id="musicControlsPanel" class="absolute left-[56px] top-1/2 -translate-y-1/2 bg-[#121212] border border-[#2a2a2a] rounded-md shadow-2xl p-1.5 hidden items-center gap-1.5 z-50 whitespace-nowrap">
           <button id="ctrlRewind" title="Rewind 5s" class="w-5 h-5 bg-[#1a1a1a] hover:bg-[#252525] rounded flex items-center justify-center text-mono-300 hover:text-white transition-colors cursor-pointer">
             <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 20L9 12l10-8v16zM5 19V5"/></svg>
           </button>
@@ -226,13 +211,13 @@
         </div>
       </div>
 
-      <div class="w-6 h-[1px] bg-[#222222] rounded-full"></div>
+      <div class="w-5 h-[1px] bg-[#222222] rounded-full"></div>
 
       <!-- CLOCK STREAM -->
-      <div id="clockStream" class="flex flex-col items-center text-[9px] leading-[1.2] tracking-widest text-[#666666] font-medium select-none text-outline">
+      <div id="clockStream" class="flex flex-col items-center text-[8px] leading-[1.2] tracking-widest text-[#666666] font-medium select-none text-outline">
         <span id="stHours" class="text-mono-300 font-semibold">08</span>
         <span id="stMinutes" class="text-mono-400">05</span>
-        <span id="stPeriod" class="text-[8px] text-mono-500 font-bold">PM</span>
+        <span id="stPeriod" class="text-[7px] text-mono-500 font-bold">PM</span>
         <span class="text-[#333333] my-[1px]">—</span>
         <span id="stMonth1" class="text-mono-400">OC</span>
         <span id="stMonth2" class="text-mono-500">T </span>
@@ -240,17 +225,29 @@
         <span id="stYear" class="text-mono-500">26</span>
       </div>
 
-      <div class="w-6 h-[1px] bg-[#222222] rounded-full"></div>
+      <div class="w-5 h-[1px] bg-[#222222] rounded-full"></div>
 
       <!-- NEWS POPUP BUTTON -->
-      <button id="newsModalBtn" title="Updates & News" class="w-9 h-9 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150 cursor-pointer">
-        <img src="news_icon.png" alt="News" class="w-[14px] h-[14px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="this.src='https://img.icons8.com/?size=100&id=LgDFs74DotUI&format=png&color=FFFFFF'">
+      <button id="newsModalBtn" title="Updates & News" class="w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150 cursor-pointer">
+        <img src="news_icon.png" alt="News" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="this.src='https://img.icons8.com/?size=100&id=LgDFs74DotUI&format=png&color=FFFFFF'">
       </button>
 
-      <!-- 6. SETTINGS -->
+      <!-- 6. PROFILE BUTTON (Separated from Games & Apps) -->
+      <nav class="w-full flex flex-col items-center" aria-label="Profile Navigation">
+        <button data-nav-id="profile" data-subtitle="PROFILE" data-index="5" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150 my-1" aria-label="Profile">
+          <!-- Overlapping Profile Deco Frame -->
+          <img src="https://cherrion.top/elements/pfpdeco/whiteroses.png" alt="Profile Deco" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[46px] h-[46px] pointer-events-none object-contain z-20">
+          <!-- Profile Initial Circle -->
+          <div class="w-6 h-6 bg-[#1c1c1c] border border-[#333] rounded-full flex items-center justify-center text-[10px] font-bold text-white z-10 shadow-md group-hover:border-white transition-colors">
+            <span id="userInitial">U</span>
+          </div>
+        </button>
+      </nav>
+
+      <!-- 7. SETTINGS -->
       <nav class="w-full flex flex-col items-center" aria-label="Settings Navigation">
-        <button data-nav-id="settings" data-subtitle="SETTINGS" data-index="5" class="nav-btn group relative w-9 h-9 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Settings">
-          <img src="https://img.icons8.com/?size=100&id=84040&format=png&color=FFFFFF" alt="Settings" class="w-[14px] h-[14px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'settings')">
+        <button data-nav-id="settings" data-subtitle="SETTINGS" data-index="6" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Settings">
+          <img src="https://img.icons8.com/?size=100&id=84040&format=png&color=FFFFFF" alt="Settings" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'settings')">
         </button>
       </nav>
 
@@ -259,7 +256,7 @@
   </aside>
 
   <!-- Floating Hover Tooltip -->
-  <div id="tooltip" class="fixed left-[70px] bg-[#141414] text-white text-[10px] tracking-widest px-2.5 py-1 rounded-md border border-[#2a2a2a] shadow-2xl opacity-0 pointer-events-none z-50 transition-opacity duration-150 flex items-center uppercase">
+  <div id="tooltip" class="fixed left-[60px] bg-[#141414] text-white text-[10px] tracking-widest px-2.5 py-1 rounded-md border border-[#2a2a2a] shadow-2xl opacity-0 pointer-events-none z-50 transition-opacity duration-150 flex items-center uppercase">
     <span id="tooltipText">HOME</span>
   </div>
 
@@ -288,7 +285,7 @@
 
   <!-- Application JavaScript Logic -->
   <script>
-    const CURRENT_NEWS_KEY = 'v2_text_outline_fix'; 
+    const CURRENT_NEWS_KEY = 'v3_update1_new_gui'; 
     const SAVED_NEWS_KEY = localStorage.getItem('fruitiger_news_key') || '';
     const SAVED_WALLPAPER = localStorage.getItem('fruitiger_wallpaper') || '';
     const SAVED_LOOP_SETTING = localStorage.getItem('fruitiger_video_loop') !== 'false';
@@ -298,6 +295,39 @@
     document.title = SAVED_TITLE;
     let favEl = document.getElementById('dynamicFavicon');
     if (favEl) favEl.href = SAVED_FAVICON;
+
+    let currentUsername = localStorage.getItem('fruitiger_username') || 'username';
+    function updateUsernameDisplay(name) {
+      currentUsername = name || 'username';
+      localStorage.setItem('fruitiger_username', currentUsername);
+      const initialEl = document.getElementById('userInitial');
+      if (initialEl) {
+        initialEl.textContent = currentUsername.charAt(0).toUpperCase();
+      }
+    }
+
+    let currentProfileDeco = localStorage.getItem('fruitiger_profile_deco') || 'https://cherrion.top/elements/pfpdeco/whiteroses.png';
+
+    function updateProfileDecoDisplay(url) {
+      currentProfileDeco = url;
+      localStorage.setItem('fruitiger_profile_deco', currentProfileDeco);
+      
+      const profileBtn = document.querySelector('[data-nav-id="profile"]');
+      if (profileBtn) {
+        let decoImg = profileBtn.querySelector('img');
+        if (currentProfileDeco) {
+          if (!decoImg) {
+            decoImg = document.createElement('img');
+            decoImg.className = 'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[46px] h-[46px] pointer-events-none object-contain z-20';
+            profileBtn.insertBefore(decoImg, profileBtn.firstChild);
+          }
+          decoImg.src = currentProfileDeco;
+          decoImg.style.display = 'block';
+        } else if (decoImg) {
+          decoImg.style.display = 'none';
+        }
+      }
+    }
 
     const appUrls = {
       games: 'APP/gamehub.html',
@@ -430,12 +460,6 @@
         vid.muted = true;
         vid.playsInline = true;
         vid.loop = loopEnabled;
-        vid.addEventListener('ended', () => {
-          if (!loopEnabled) {
-            vid.pause();
-            vid.currentTime = vid.duration;
-          }
-        });
         layer.appendChild(vid);
       } else {
         const img = document.createElement('div');
@@ -448,6 +472,8 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       initCanvas();
+      updateUsernameDisplay(currentUsername);
+      updateProfileDecoDisplay(currentProfileDeco);
 
       const newsModal = document.getElementById('newsModal');
       const closeNewsBtn = document.getElementById('closeNewsBtn');
@@ -473,7 +499,6 @@
 
       const sidebar = document.getElementById('sidebar');
       const navButtons = Array.from(document.querySelectorAll('.nav-btn'));
-      const activeIndicator = document.getElementById('activeIndicator');
       const tooltip = document.getElementById('tooltip');
       const tooltipText = document.getElementById('tooltipText');
       const mainContainer = document.getElementById('mainContainer');
@@ -598,19 +623,6 @@
       updateClockAndStream();
       setInterval(updateClockAndStream, 1000);
 
-      function updateIndicator(btn) {
-        if (!btn) return;
-        const iconImg = btn.querySelector('img') || btn.querySelector('svg');
-        const sidebarRect = sidebar.getBoundingClientRect();
-        if (iconImg) {
-          const iconRect = iconImg.getBoundingClientRect();
-          activeIndicator.style.transform = `translateY(${iconRect.top - sidebarRect.top}px)`;
-        } else {
-          const btnRect = btn.getBoundingClientRect();
-          activeIndicator.style.transform = `translateY(${btnRect.top - sidebarRect.top + (btnRect.height / 2) - 10}px)`;
-        }
-      }
-
       function setNavIndex(index) {
         if (index < 0 || index >= navButtons.length) return;
         activeIndex = index;
@@ -623,7 +635,6 @@
         });
         targetBtn.classList.remove('text-mono-400');
         targetBtn.classList.add('bg-[#181818]', 'text-white');
-        updateIndicator(targetBtn);
 
         mainDisplay.classList.remove('animate-fast-fade');
         void mainDisplay.offsetWidth;
@@ -661,12 +672,12 @@
           sectionContent.className = "w-full h-full hidden";
         } else if (['GAMES', 'MUSIC', 'MOVIES', 'ANIME'].includes(subtitle)) {
           isAppLoading = true;
-          mainContainer.className = "flex-1 h-screen bg-black flex flex-col relative overflow-hidden p-0 z-10";
-          mainDisplay.className = "w-full h-full z-10 flex flex-col relative";
+          mainContainer.className = "flex-1 h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden p-0 z-10";
+          mainDisplay.className = "w-full h-full z-10 flex flex-col items-center justify-center relative";
           heroTitle.classList.add('hidden');
           heroDate.classList.add('hidden');
           welcomeSubtitle.classList.add('hidden');
-          sectionContent.className = "w-full h-full block relative";
+          sectionContent.className = "w-full h-full block relative flex items-center justify-center";
 
           const targetUrl = appUrls[subtitle.toLowerCase()];
           sectionContent.innerHTML = `
@@ -694,10 +705,19 @@
           iframeEl.addEventListener('load', handleLoaded);
           setTimeout(handleLoaded, 2500);
 
+        } else if (subtitle === 'PROFILE') {
+          isAppLoading = false;
+          mainContainer.className = "flex-1 h-screen bg-[#050505] flex flex-col items-center justify-start text-center p-8 relative overflow-y-auto z-10 select-text";
+          mainDisplay.className = "w-full max-w-4xl flex flex-col items-center justify-start pt-12 gap-6 text-center mx-auto";
+          heroTitle.classList.add('hidden');
+          heroDate.classList.add('hidden');
+          welcomeSubtitle.classList.add('hidden');
+          sectionContent.className = "w-full block";
+          renderProfileView();
         } else if (subtitle === 'SETTINGS') {
           isAppLoading = false;
           mainContainer.className = "flex-1 h-screen bg-[#050505] flex flex-col items-center justify-start text-center p-8 relative overflow-y-auto z-10 select-text";
-          mainDisplay.className = "w-full max-w-xl flex flex-col items-center justify-start pt-12 gap-6 text-center";
+          mainDisplay.className = "w-full max-w-xl flex flex-col items-center justify-start pt-12 gap-6 text-center mx-auto";
           heroTitle.classList.add('hidden');
           heroDate.classList.add('hidden');
           welcomeSubtitle.classList.add('hidden');
@@ -724,25 +744,155 @@
         }
       }
 
+      function renderProfileView() {
+        sectionContent.innerHTML = `
+          <div class="w-full flex flex-col items-start text-left space-y-6 pb-16 mx-auto max-w-4xl px-4">
+            
+            <!-- Header Section with Update 1 Badge -->
+            <div class="flex items-center justify-between w-full border-b border-white/10 pb-3">
+              <span class="text-mono-200 font-bold text-xs tracking-[0.2em] uppercase">
+                AVATAR DECORATIONS (UPDATE 1 GUI)
+              </span>
+              <button id="resetProfileBtn" class="px-3 py-1 bg-red-950/40 hover:bg-red-900/50 border border-red-500/30 text-red-300 rounded-lg text-[10px] font-bold uppercase transition-all cursor-pointer">
+                Delete / Reset Deco
+              </button>
+            </div>
+
+            <!-- Username Update Section (Glass Card) -->
+            <div class="w-full glass-card rounded-xl p-6 flex flex-col gap-4">
+              <span class="text-xs font-bold uppercase tracking-widest text-mono-300">Update Profile Username</span>
+              <div class="flex gap-3 max-w-md">
+                <input id="profileUsernameInput" type="text" value="${currentUsername}" placeholder="Enter username..." maxlength="15" class="flex-1 bg-[#141414] border border-white/10 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-white">
+                <button id="saveProfileUsername" class="px-5 py-2 bg-white text-black font-bold text-xs uppercase rounded-lg hover:bg-mono-200 active:scale-95 transition-all cursor-pointer">UPDATE</button>
+              </div>
+            </div>
+
+            <div class="text-mono-400 uppercase tracking-[0.25em] text-[11px] font-semibold pt-2 w-full">
+              AVAILABLE DECORATIONS (GITHUB: school-rgb/frutigprof)
+            </div>
+
+            <!-- Avatar Decorations Grid (Glass Cards, Fetched from frutigprof repo) -->
+            <div id="githubProfileDecoGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 w-full">
+              <span class="text-[10px] text-mono-500 col-span-3 text-center py-6">Loading decorations from GitHub repository...</span>
+            </div>
+
+          </div>
+        `;
+
+        document.getElementById('saveProfileUsername').addEventListener('click', () => {
+          const val = document.getElementById('profileUsernameInput').value.trim();
+          if (val) {
+            updateUsernameDisplay(val);
+          }
+        });
+
+        document.getElementById('resetProfileBtn').addEventListener('click', () => {
+          updateProfileDecoDisplay('');
+          renderProfileView();
+        });
+
+        // Fetch profile decorations dynamically from school-rgb/frutigprof repository contents
+        fetch('https://api.github.com/repos/school-rgb/frutigprof/contents')
+          .then(res => {
+            if (!res.ok) throw new Error('API Blocked');
+            return res.json();
+          })
+          .then(data => {
+            const grid = document.getElementById('githubProfileDecoGrid');
+            if (!Array.isArray(data)) {
+              grid.innerHTML = '<span class="text-[10px] text-mono-500 col-span-3 text-center py-6">Unable to load decorations.</span>';
+              return;
+            }
+
+            const mediaFiles = data.filter(file => {
+              const name = file.name.toLowerCase();
+              return name.endsWith('.png') || name.endsWith('.mp4');
+            });
+
+            if (mediaFiles.length === 0) {
+              grid.innerHTML = '<span class="text-[10px] text-mono-500 col-span-3 text-center py-6">No decorations found in repo.</span>';
+              return;
+            }
+
+            grid.innerHTML = '';
+
+            const itemsToRender = [
+              { name: 'None (Plain)', download_url: '' },
+              ...mediaFiles
+            ];
+
+            itemsToRender.forEach(file => {
+              const fileUrl = file.download_url;
+              const isSelected = currentProfileDeco === fileUrl;
+              const isVideo = fileUrl && fileUrl.toLowerCase().endsWith('.mp4');
+              const displayName = file.name ? file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ') : 'None';
+
+              const card = document.createElement('div');
+              card.className = `glass-card rounded-xl p-5 flex flex-col justify-between transition-all group`;
+              if (isSelected) {
+                card.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+                card.style.boxShadow = '0 0 20px rgba(255, 255, 255, 0.1)';
+              }
+
+              let previewHTML = '';
+              if (!fileUrl) {
+                previewHTML = `<div class="w-20 h-20 rounded-full bg-[#181818] border border-[#333] flex items-center justify-center font-bold text-xs text-mono-400 mx-auto my-4">None</div>`;
+              } else if (isVideo) {
+                previewHTML = `<div class="relative w-24 h-24 mx-auto my-3 flex items-center justify-center"><video src="${fileUrl}" class="w-full h-full object-cover rounded-xl" autoplay muted loop></video></div>`;
+              } else {
+                previewHTML = `<div class="relative w-24 h-24 mx-auto my-3 flex items-center justify-center"><img src="${fileUrl}" class="w-full h-full object-contain"></div>`;
+              }
+
+              card.innerHTML = `
+                <div class="flex flex-col items-center justify-center bg-[#141414]/80 border border-white/5 rounded-lg py-6 px-4 mb-4 relative overflow-hidden">
+                  ${previewHTML}
+                </div>
+                <div class="flex flex-col gap-1 mb-5 text-left">
+                  <span class="text-sm font-bold text-white tracking-wide uppercase">${displayName}</span>
+                  <span class="text-xs text-mono-400 font-sans">Avatar overlay decoration</span>
+                </div>
+                <div class="flex items-center justify-end pt-3 border-t border-white/10">
+                  <button class="apply-deco-btn px-4 py-2 ${isSelected ? 'bg-white text-black font-bold' : 'bg-[#1a1a1a] hover:bg-[#252525] border border-white/10 text-white'} rounded-lg text-xs transition-all cursor-pointer font-semibold uppercase" data-url="${fileUrl}">
+                    ${isSelected ? 'Applied' : 'Apply'}
+                  </button>
+                </div>
+              `;
+
+              card.querySelector('.apply-deco-btn').addEventListener('click', () => {
+                updateProfileDecoDisplay(fileUrl);
+                renderProfileView();
+              });
+
+              grid.appendChild(card);
+            });
+          })
+          .catch(() => {
+            const grid = document.getElementById('githubProfileDecoGrid');
+            if (grid) {
+              grid.innerHTML = '<span class="text-[10px] text-mono-400 col-span-3 text-center py-6 px-2">School Wi-Fi restrictions detected. GitHub API requests are blocked. Default profile decorations remain fully functional.</span>';
+            }
+          });
+      }
+
       function renderSettingsView() {
         const currentTitle = document.title;
         const currentFavicon = document.getElementById('dynamicFavicon')?.href || '';
         let currentLoop = localStorage.getItem('fruitiger_video_loop') !== 'false';
 
         sectionContent.innerHTML = `
-          <div class="w-full flex flex-col items-center text-center space-y-6 text-xs tracking-wider pb-12">
+          <div class="w-full flex flex-col items-center text-center space-y-6 text-xs tracking-wider pb-12 mx-auto">
             
-            <div class="text-mono-400 uppercase tracking-[0.25em] text-[11px] font-semibold border-b border-[#222222] pb-2 w-full max-w-md text-center">
-              TAB CLOAKING & CUSTOMIZATION
+            <div class="text-mono-400 uppercase tracking-[0.25em] text-[11px] font-semibold border-b border-white/10 pb-2 w-full max-w-md text-center">
+              TAB CLOAKING & CUSTOMIZATION (GUI v1)
             </div>
 
             <!-- Quick Presets -->
             <div class="flex flex-col items-center gap-2 w-full max-w-md">
               <span class="text-[10px] text-mono-500 uppercase tracking-widest">QUICK CLOAK PRESETS</span>
               <div class="grid grid-cols-3 gap-2 w-full">
-                <button id="presetGoogle" class="px-2 py-2 bg-[#121212] hover:bg-[#1f1f1f] border border-[#2a2a2a] rounded-md text-[10px] text-mono-200 transition-colors font-bold cursor-pointer">GOOGLE</button>
-                <button id="presetDrive" class="px-2 py-2 bg-[#121212] hover:bg-[#1f1f1f] border border-[#2a2a2a] rounded-md text-[10px] text-mono-200 transition-colors font-bold cursor-pointer">DRIVE</button>
-                <button id="presetCanvas" class="px-2 py-2 bg-[#121212] hover:bg-[#1f1f1f] border border-[#2a2a2a] rounded-md text-[10px] text-mono-200 transition-colors font-bold cursor-pointer">CANVAS</button>
+                <button id="presetGoogle" class="px-2 py-2 glass-card hover:border-white rounded-md text-[10px] text-mono-200 transition-colors font-bold cursor-pointer">GOOGLE</button>
+                <button id="presetDrive" class="px-2 py-2 glass-card hover:border-white rounded-md text-[10px] text-mono-200 transition-colors font-bold cursor-pointer">DRIVE</button>
+                <button id="presetCanvas" class="px-2 py-2 glass-card hover:border-white rounded-md text-[10px] text-mono-200 transition-colors font-bold cursor-pointer">CANVAS</button>
               </div>
             </div>
 
@@ -750,12 +900,12 @@
             <div class="flex flex-col gap-3 w-full max-w-md text-left pt-1">
               <label class="flex flex-col gap-1">
                 <span class="text-[10px] text-mono-400 uppercase font-semibold">CUSTOM TAB TITLE</span>
-                <input id="tabTitleInput" type="text" value="${currentTitle}" placeholder="e.g. Google Search" class="bg-[#121212] border border-[#2a2a2a] rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-mono-400">
+                <input id="tabTitleInput" type="text" value="${currentTitle}" placeholder="e.g. Google Search" class="glass-card rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-white">
               </label>
 
               <label class="flex flex-col gap-1">
                 <span class="text-[10px] text-mono-400 uppercase font-semibold">CUSTOM FAVICON URL</span>
-                <input id="tabIconInput" type="text" value="${currentFavicon}" placeholder="https://example.com/favicon.ico" class="bg-[#121212] border border-[#2a2a2a] rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-mono-400">
+                <input id="tabIconInput" type="text" value="${currentFavicon}" placeholder="https://example.com/favicon.ico" class="glass-card rounded-md px-3 py-2 text-xs text-white focus:outline-none focus:border-white">
               </label>
 
               <button id="applyTabCustom" class="mt-2 w-full py-2.5 bg-white text-black font-bold text-xs uppercase rounded-md hover:bg-mono-200 active:scale-95 transition-all cursor-pointer">
@@ -763,24 +913,24 @@
               </button>
             </div>
 
-            <div class="text-mono-400 uppercase tracking-[0.25em] text-[11px] font-semibold border-b border-[#222222] pb-2 pt-4 w-full max-w-md text-center">
-              WALLPAPERS (GITHUB: school-rgb/frutiger-pr0xy-wallpapers)
+            <div class="text-mono-400 uppercase tracking-[0.25em] text-[11px] font-semibold border-b border-white/10 pb-2 pt-4 w-full max-w-md text-center">
+              WALLPAPERS
             </div>
 
             <!-- Video Loop Toggle Setting -->
-            <div class="flex items-center justify-between w-full max-w-md px-2 py-2 bg-[#121212] border border-[#2a2a2a] rounded-md">
+            <div class="flex items-center justify-between w-full max-w-md px-3 py-2 glass-card rounded-md">
               <span class="text-[10px] text-mono-300 font-semibold uppercase">VIDEO LOOPING</span>
-              <button id="loopToggleBtn" class="px-3 py-1 bg-[#1a1a1a] hover:bg-[#252525] border border-[#333] rounded text-[10px] font-bold text-white transition-colors cursor-pointer">
+              <button id="loopToggleBtn" class="px-3 py-1 bg-[#1a1a1a] hover:bg-[#252525] border border-white/10 rounded text-[10px] font-bold text-white transition-colors cursor-pointer">
                 ${currentLoop ? 'ENABLED' : 'DISABLED'}
               </button>
             </div>
 
             <!-- Background Selector Section -->
             <div class="flex flex-col items-center gap-3 w-full max-w-md">
-              <button id="bgDefaultBtn" class="w-full py-2 bg-[#121212] hover:bg-[#1a1a1a] border border-[#2a2a2a] rounded-md text-white font-bold cursor-pointer">
+              <button id="bgDefaultBtn" class="w-full py-2 glass-card hover:border-white rounded-md text-white font-bold cursor-pointer">
                 DEFAULT (PARTICLE DOTS)
               </button>
-              <div id="githubWallpapersGrid" class="grid grid-cols-2 gap-2 w-full max-h-48 overflow-y-auto p-1 border border-[#222222] rounded-md bg-[#0c0c0c]">
+              <div id="githubWallpapersGrid" class="grid grid-cols-2 gap-2 w-full max-h-48 overflow-y-auto p-1 border border-white/10 rounded-md bg-[#0c0c0c]/80">
                 <span class="text-[10px] text-mono-500 col-span-2 text-center py-4">Loading wallpapers from GitHub...</span>
               </div>
             </div>
@@ -806,7 +956,10 @@
         });
 
         fetch('https://api.github.com/repos/school-rgb/frutiger-pr0xy-wallpapers/contents')
-          .then(res => res.json())
+          .then(res => {
+            if (!res.ok) throw new Error('API Blocked');
+            return res.json();
+          })
           .then(data => {
             const grid = document.getElementById('githubWallpapersGrid');
             if (!Array.isArray(data)) {
@@ -830,7 +983,7 @@
               const isVideo = file.name.toLowerCase().endsWith('.mp4');
 
               const thumbDiv = document.createElement('div');
-              thumbDiv.className = 'relative h-20 bg-[#141414] border border-[#2a2a2a] rounded overflow-hidden cursor-pointer hover:border-white transition-all flex items-center justify-center group';
+              thumbDiv.className = 'relative h-20 glass-card rounded overflow-hidden cursor-pointer hover:border-white transition-all flex items-center justify-center group';
               
               if (isVideo) {
                 thumbDiv.innerHTML = `<video src="${fileUrl}" class="w-full h-full object-cover"></video>`;
@@ -848,7 +1001,9 @@
           })
           .catch(() => {
             const grid = document.getElementById('githubWallpapersGrid');
-            if (grid) grid.innerHTML = '<span class="text-[10px] text-mono-500 col-span-2 text-center py-4">Failed to connect to GitHub repo.</span>';
+            if (grid) {
+              grid.innerHTML = '<span class="text-[10px] text-mono-400 col-span-2 text-center py-4 px-2">School Wi-Fi restrictions detected. GitHub API requests are blocked. Default particle backgrounds and custom cloaks remain fully functional.</span>';
+            }
           });
 
         document.getElementById('presetGoogle').addEventListener('click', () => {
@@ -881,17 +1036,16 @@
       });
 
       setNavIndex(0);
-      window.addEventListener('resize', () => updateIndicator(navButtons[activeIndex]));
     });
 
     function handleImgError(imgElement, type) {
       const svgs = {
-        'home': `<svg class="w-[14px] h-[14px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H15a1 1 0 01-1-1v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/></svg>`,
-        'games': `<svg class="w-[14px] h-[14px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12h.01M18 12h.01M6 10h4m-2-2v4M6 6h12a6 6 0 016 6v3a3 3 0 01-3 3h-2.5a1.5 1.5 0 00-1.2.6l-1.6 2.133a1.5 1.5 0 01-2.4 0l-1.6-2.133a1.5 1.5 0 00-1.2-.6H5a3 3 0 01-3-3v-3a6 6 0 016-6z"/></svg>`,
-        'music': `<svg class="w-[14px] h-[14px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>`,
-        'movies': `<svg class="w-[14px] h-[14px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 4v16M17 4v16M3 8h18M3 16h18M3 4h18v16H3V4z"/></svg>`,
-        'anime': `<svg class="w-[14px] h-[14px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M17 2l-5 5-5-5"/></svg>`,
-        'settings': `<svg class="w-[14px] h-[14px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>`
+        'home': `<svg class="w-[13px] h-[13px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9.75L12 3l9 6.75V21a1 1 0 01-1 1H15a1 1 0 01-1-1v-5a1 1 0 00-1-1h-2a1 1 0 00-1 1v5a1 1 0 01-1 1H4a1 1 0 01-1-1V9.75z"/></svg>`,
+        'games': `<svg class="w-[13px] h-[13px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12h.01M18 12h.01M6 10h4m-2-2v4M6 6h12a6 6 0 016 6v3a3 3 0 01-3 3h-2.5a1.5 1.5 0 00-1.2.6l-1.6 2.133a1.5 1.5 0 01-2.4 0l-1.6-2.133a1.5 1.5 0 00-1.2-.6H5a3 3 0 01-3-3v-3a6 6 0 016-6z"/></svg>`,
+        'music': `<svg class="w-[13px] h-[13px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zm12-2c0 1.105-1.343 2-3 2s-3-.895-3-2 .895-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>`,
+        'movies': `<svg class="w-[13px] h-[13px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 4v16M17 4v16M3 8h18M3 16h18M3 4h18v16H3V4z"/></svg>`,
+        'anime': `<svg class="w-[13px] h-[13px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M17 2l-5 5-5-5"/></svg>`,
+        'settings': `<svg class="w-[13px] h-[13px] text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>`
       };
       const parent = imgElement.parentElement;
       if (parent && svgs[type]) parent.innerHTML = svgs[type];

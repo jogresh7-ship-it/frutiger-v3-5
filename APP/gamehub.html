@@ -26,10 +26,12 @@
     <meta name="description" content="Play unblocked games on Fruit Games. Fast, free, no downloads—perfect for school or home.">
 
     <style>
-        /* Custom Font Definition */
+        /* Custom TTF Font Definition with Relative and Root Fallbacks */
         @font-face {
             font-family: 'GNFFont';
-            src: url('APPFONT/gnf.regular.ttf') format('truetype');
+            src: url('/APPFONT/gnf.regular.ttf') format('truetype'),
+                 url('APPFONT/gnf.regular.ttf') format('truetype'),
+                 url('./APPFONT/gnf.regular.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
@@ -39,7 +41,7 @@
         *, *::before, *::after,
         html, body, input, button, select, textarea, option, optgroup,
         h1, h2, h3, h4, h5, h6, p, span, a, div, iframe {
-            font-family: 'GNFFont', system-ui, -apple-system, sans-serif !important;
+            font-family: 'GNFFont', sans-serif !important;
         }
 
         :root {
@@ -73,17 +75,19 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Splash Screen Container */
+        /* Minimalist Blurry Splash Screen Container */
         #appSplash {
             position: fixed;
             inset: 0;
-            background: transparent;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             z-index: 9999;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.4s ease;
         }
 
         .splash-inner {
@@ -91,60 +95,30 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transform: translateY(-20px);
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-            100% { transform: translateY(0px); }
+        /* Circular Spinner Animation */
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
-        .animate-float {
-            animation: float 3s ease-in-out infinite;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .pixelated-inverted {
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
-            filter: invert(100%);
-        }
-
-        /* Bouncing Text Animation per Letter */
-        .bouncing-text {
-            display: flex;
-            gap: 2px;
-            margin-top: 1.5rem;
-            color: #8e8e93;
-            font-size: 18px;
+        .loading-text {
+            margin-top: 14px;
+            color: #ffffff;
+            font-size: 13px;
+            letter-spacing: 3px;
             font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .bouncing-text span {
-            display: inline-block;
-            animation: bounceLetter 1.2s infinite ease-in-out;
-        }
-
-        .bouncing-text span:nth-child(1) { animation-delay: 0.0s; }
-        .bouncing-text span:nth-child(2) { animation-delay: 0.1s; }
-        .bouncing-text span:nth-child(3) { animation-delay: 0.2s; }
-        .bouncing-text span:nth-child(4) { animation-delay: 0.3s; }
-        .bouncing-text span:nth-child(5) { animation-delay: 0.4s; }
-        .bouncing-text span:nth-child(6) { animation-delay: 0.5s; }
-        .bouncing-text span:nth-child(7) { animation-delay: 0.6s; }
-        .bouncing-text span:nth-child(8) { animation-delay: 0.7s; }
-        .bouncing-text span:nth-child(9) { animation-delay: 0.8s; }
-        .bouncing-text span:nth-child(10) { animation-delay: 0.9s; }
-
-        @keyframes bounceLetter {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-7px);
-                color: #ffffff;
-            }
+            text-transform: uppercase;
         }
 
         header {
@@ -372,18 +346,11 @@
 </head>
 <body class="dark-mode">
 
-    <!-- Splash Screen -->
+    <!-- Minimalist Spinner Splash Screen with Blurry Backdrop -->
     <div id="appSplash">
         <div class="splash-inner">
-            <img id="floating-image" 
-                 class="w-24 h-24 object-contain animate-float pixelated-inverted" 
-                 src="https://github.com/school-rgb/frutiger-logo/blob/main/Screenshot%202026-09-19%202.03.59%20PM.png?raw=true" 
-                 alt="Fruit Games Loading" 
-                 onerror="this.src='https://placehold.co/200x200/111111/ffffff?text=Loading...';" />
-            
-            <div class="bouncing-text">
-                <span>l</span><span>o</span><span>a</span><span>d</span><span>i</span><span>n</span><span>g</span><span>.</span><span>.</span><span>.</span>
-            </div>
+            <div class="spinner"></div>
+            <div class="loading-text">LOADING...</div>
         </div>
     </div>
 
@@ -451,9 +418,9 @@
                 const splash = document.getElementById('appSplash');
                 if (splash) {
                     splash.style.opacity = '0';
-                    setTimeout(() => splash.remove(), 500);
+                    setTimeout(() => splash.remove(), 400);
                 }
-            }, 1200);
+            }, 1000);
         });
 
         async function listZones() {
@@ -546,7 +513,7 @@
                             <head>
                                 <meta charset="UTF-8">
                                 <style>
-                                    *, body { font-family: 'GNFFont', system-ui, sans-serif !important; }
+                                    *, body { font-family: 'GNFFont', sans-serif !important; }
                                     body { background: transparent; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
                                     h1 { color: #fc2651; font-size: 24px; }
                                     p { color: #8e8e93; font-size: 15px; }

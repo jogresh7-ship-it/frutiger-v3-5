@@ -123,7 +123,7 @@
   <!-- GLOBAL PERSISTENT SINGLE AUDIO SOURCE -->
   <audio id="globalAudio" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" preload="auto" loop></audio>
 
-  <!-- Dynamic Background Container -->
+  <!-- Dynamic Background Container (spans full viewport behind sidebar and content) -->
   <div id="bgContainer" class="fixed inset-0 pointer-events-none z-0 w-full h-full">
     <canvas id="bgCanvas" class="w-full h-full"></canvas>
     <div id="wallpaperLayer" class="absolute inset-0 hidden overflow-hidden"></div>
@@ -151,7 +151,6 @@
     </div>
   </div>
 
-
   <!-- SETUP MODAL (no close / skip) -->
   <div id="setupModal" class="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[110] flex items-center justify-center hidden">
     <div class="w-full max-w-md bg-[#121212] border border-[#2a2a2a] rounded-2xl p-6 shadow-2xl flex flex-col relative text-left">
@@ -178,45 +177,45 @@
     </div>
   </div>
 
-  <!-- 100% Viewport Height Sidebar (w-[52px]) -->
-  <aside id="sidebar" class="h-screen w-[52px] bg-[#0a0a0a] border-r border-[#1a1a1a] flex flex-col justify-between items-center py-4 relative z-50 select-none shrink-0">
+  <!-- Fully See-Through Transparent Sidebar (w-[52px]) -->
+  <aside id="sidebar" class="h-screen w-[52px] bg-transparent border-r border-white/10 flex flex-col justify-between items-center py-4 relative z-50 select-none shrink-0">
 
     <!-- UPPER SECTION -->
     <div class="w-full flex flex-col items-center">
       <nav class="w-full flex flex-col items-center gap-1.5 px-1" aria-label="Primary Navigation">
         
         <!-- 1. HOME -->
-        <button data-nav-id="home" data-subtitle="HOME" data-index="0" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Home">
+        <button data-nav-id="home" data-subtitle="HOME" data-index="0" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150" aria-label="Home">
           <img src="https://img.icons8.com/?size=100&id=1iF9PyJ2Thzo&format=png&color=FFFFFF" alt="Home" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'home')">
         </button>
 
         <!-- 2. BROWSER -->
-        <button data-nav-id="browser" data-subtitle="BROWSER" data-index="1" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Browser">
+        <button data-nav-id="browser" data-subtitle="BROWSER" data-index="1" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150" aria-label="Browser">
           <img src="https://img.icons8.com/?size=100&id=Zt694HAaTkB3&format=png&color=FFFFFF" alt="Browser" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'browser')">
         </button>
 
         <!-- 3. CHAT -->
-        <button data-nav-id="chat" data-subtitle="CHAT" data-index="2" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Chat">
+        <button data-nav-id="chat" data-subtitle="CHAT" data-index="2" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150" aria-label="Chat">
           <img src="https://img.icons8.com/?size=100&id=uUhNNuMdfOjI&format=png&color=FFFFFF" alt="Chat" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'chat')">
         </button>
 
         <!-- 4. GAMES -->
-        <button data-nav-id="games" data-subtitle="GAMES" data-index="3" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Games">
+        <button data-nav-id="games" data-subtitle="GAMES" data-index="3" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150" aria-label="Games">
           <img src="https://img.icons8.com/?size=100&id=GFDbOB2OqPWt&format=png&color=FFFFFF" alt="Games" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'games')">
         </button>
 
         <!-- 5. MUSIC -->
-        <button data-nav-id="music" data-subtitle="MUSIC" data-index="4" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Music">
+        <button data-nav-id="music" data-subtitle="MUSIC" data-index="4" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150" aria-label="Music">
           <img src="https://img.icons8.com/?size=100&id=cpC9tCaQDyxh&format=png&color=FFFFFF" alt="Music" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'music')">
         </button>
 
         <!-- 6. MOVIES -->
-        <button data-nav-id="movies" data-subtitle="MOVIES" data-index="5" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Movies">
+        <button data-nav-id="movies" data-subtitle="MOVIES" data-index="5" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150" aria-label="Movies">
           <img src="https://img.icons8.com/?size=100&id=xmdB5b5JmqRr&format=png&color=FFFFFF" alt="Movies" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'movies')">
         </button>
 
         <!-- 7. ANIME -->
-        <button data-nav-id="anime" data-subtitle="ANIME" data-index="6" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Anime">
+        <button data-nav-id="anime" data-subtitle="ANIME" data-index="6" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150" aria-label="Anime">
           <img src="https://img.icons8.com/?size=100&id=RHbEtcSp-frn&format=png&color=FFFFFF" alt="Anime" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'anime')">
         </button>
       </nav>
@@ -225,11 +224,11 @@
     <!-- LOWER SECTION -->
     <div class="w-full flex flex-col items-center px-1 mt-auto relative gap-1.5">
       
-      <div class="w-5 h-[1px] bg-[#222222] rounded-full"></div>
+      <div class="w-5 h-[1px] bg-white/20 rounded-full"></div>
 
       <!-- COMPACT MUSIC THUMBNAIL BOX -->
       <div id="musicThumbContainer" class="relative flex justify-center w-full hidden">
-        <div id="musicThumbBox" class="w-6 h-6 bg-[#141414] border border-[#2a2a2a] rounded-md overflow-hidden flex items-center justify-center cursor-pointer hover:border-mono-400 transition-colors">
+        <div id="musicThumbBox" class="w-6 h-6 bg-black/40 border border-white/20 rounded-md overflow-hidden flex items-center justify-center cursor-pointer hover:border-mono-400 transition-colors">
           <img id="sidebarMusicImg" src="https://img.icons8.com/?size=100&id=cpC9tCaQDyxh&format=png&color=FFFFFF" alt="Now Playing" class="w-3.5 h-3.5 object-cover rounded">
         </div>
 
@@ -249,7 +248,7 @@
         </div>
       </div>
 
-      <div class="w-5 h-[1px] bg-[#222222] rounded-full"></div>
+      <div class="w-5 h-[1px] bg-white/20 rounded-full"></div>
 
       <!-- CLOCK STREAM -->
       <div id="clockStream" class="flex flex-col items-center text-[8px] leading-[1.2] tracking-widest text-[#666666] font-medium select-none text-outline">
@@ -263,16 +262,16 @@
         <span id="stYear" class="text-mono-500">26</span>
       </div>
 
-      <div class="w-5 h-[1px] bg-[#222222] rounded-full"></div>
+      <div class="w-5 h-[1px] bg-white/20 rounded-full"></div>
 
       <!-- NEWS POPUP BUTTON -->
-      <button id="newsModalBtn" title="Updates & News" class="w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150 cursor-pointer">
+      <button id="newsModalBtn" title="Updates & News" class="w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150 cursor-pointer">
         <img src="news_icon.png" alt="News" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="this.src='https://img.icons8.com/?size=100&id=LgDFs74DotUI&format=png&color=FFFFFF'">
       </button>
 
       <!-- PROFILE BUTTON -->
       <nav class="w-full flex flex-col items-center" aria-label="Profile Navigation">
-        <button data-nav-id="profile" data-subtitle="PROFILE" data-index="7" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150 my-1" aria-label="Profile">
+        <button data-nav-id="profile" data-subtitle="PROFILE" data-index="7" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150 my-1" aria-label="Profile">
           <!-- Overlapping Profile Deco Frame -->
           <img src="https://cherrion.top/elements/pfpdeco/whiteroses.png" alt="Profile Deco" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[46px] h-[46px] pointer-events-none object-contain z-20">
           <!-- Profile Initial Circle -->
@@ -284,7 +283,7 @@
 
       <!-- SETTINGS -->
       <nav class="w-full flex flex-col items-center" aria-label="Settings Navigation">
-        <button data-nav-id="settings" data-subtitle="SETTINGS" data-index="8" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-[#181818] active:scale-95 transition-all duration-150" aria-label="Settings">
+        <button data-nav-id="settings" data-subtitle="SETTINGS" data-index="8" class="nav-btn group relative w-8 h-8 rounded-lg flex items-center justify-center text-mono-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all duration-150" aria-label="Settings">
           <img src="https://img.icons8.com/?size=100&id=84040&format=png&color=FFFFFF" alt="Settings" class="w-[13px] h-[13px] object-contain transition-transform duration-200 group-hover:scale-110" onerror="handleImgError(this, 'settings')">
         </button>
       </nav>
@@ -787,11 +786,11 @@
         const subtitle = targetBtn.getAttribute('data-subtitle');
 
         navButtons.forEach(btn => {
-          btn.classList.remove('bg-[#181818]', 'text-white');
+          btn.classList.remove('bg-white/20', 'text-white');
           btn.classList.add('text-mono-400');
         });
         targetBtn.classList.remove('text-mono-400');
-        targetBtn.classList.add('bg-[#181818]', 'text-white');
+        targetBtn.classList.add('bg-white/20', 'text-white');
 
         mainDisplay.classList.remove('animate-fast-fade');
         void mainDisplay.offsetWidth;
@@ -829,7 +828,7 @@
           sectionContent.className = "w-full h-full hidden";
         } else if (['BROWSER', 'CHAT', 'GAMES', 'MUSIC', 'MOVIES', 'ANIME'].includes(subtitle)) {
           isAppLoading = true;
-          mainContainer.className = "flex-1 h-screen bg-black flex flex-col items-center justify-center relative overflow-hidden p-0 z-10";
+          mainContainer.className = "flex-1 h-screen bg-transparent flex flex-col items-center justify-center relative overflow-hidden p-0 z-10";
           mainDisplay.className = "w-full h-full z-10 flex flex-col items-center justify-center relative";
           heroTitle.classList.add('hidden');
           heroDate.classList.add('hidden');
@@ -838,7 +837,7 @@
 
           const targetUrl = appUrls[subtitle.toLowerCase()];
           sectionContent.innerHTML = `
-            <div id="appLoader" class="absolute inset-0 bg-black/75 backdrop-blur-xs z-30 flex flex-col items-center justify-center font-mono gap-3 transition-opacity duration-300">
+            <div id="appLoader" class="absolute inset-0 bg-black/40 backdrop-blur-md z-30 flex flex-col items-center justify-center font-mono gap-3 transition-opacity duration-300">
               <div class="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
               <span class="text-xs tracking-[0.3em] text-white font-bold uppercase">LOADING ${subtitle}...</span>
             </div>

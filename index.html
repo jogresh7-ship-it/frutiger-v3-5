@@ -325,7 +325,11 @@
   <script>
     const CURRENT_NEWS_KEY = 'v4_update2_profile_setup'; 
     const CURRENT_SETUP_KEY = 'v4_update2_profile_setup';
-    const PROFILE_SYNC_ORIGINS = ['https://frutichat.vercel.app']; // sites that receive your profile
+    const PROFILE_SYNC_ORIGINS = [
+      'https://global-chat-virid-three.vercel.app',
+      'https://global-chat-plum.vercel.app',
+      'https://frutichat.vercel.app'
+    ]; // sites that receive profile updates
     const SAVED_NEWS_KEY = localStorage.getItem('fruitiger_news_key') || '';
     const SAVED_WALLPAPER = localStorage.getItem('fruitiger_wallpaper') || '';
     const SAVED_LOOP_SETTING = localStorage.getItem('fruitiger_video_loop') !== 'false';
@@ -338,18 +342,38 @@
 
     let currentUsername = localStorage.getItem('fruitiger_username') || 'username';
 
-    // ===== PROFILE SYNC (postMessage to other websites) =====
-    function getProfilePayload() {
-      return { type: 'fruiti-profile', name: currentUsername, iframe: currentProfileDeco, updatedAt: Date.now() };
+    function absoluteUrl(u) {
+      if (!u || typeof u !== 'string') return '';
+      if (/^data:image\//i.test(u)) return u;
+      try { return new URL(u, window.location.href).href; } catch (e) { return ''; }
     }
+
+    let currentProfileDeco = localStorage.getItem('fruitiger_profile_deco') || 'https://cherrion.top/elements/pfpdeco/whiteroses.png';
+
+    // ===== PROFILE SYNC (postMessage to external chat and iframe applications) =====
+    function getProfilePayload() {
+      return { 
+        type: 'fruiti-profile', 
+        name: String(currentUsername || 'username').slice(0, 15), 
+        iframe: absoluteUrl(currentProfileDeco), 
+        updatedAt: Date.now() 
+      };
+    }
+
     function sendProfileToFrames(targetWin, targetOrigin) {
       const payload = getProfilePayload();
-      if (targetWin) { try { targetWin.postMessage(payload, targetOrigin || '*'); } catch (e) {} return; }
+      if (targetWin) { 
+        try { targetWin.postMessage(payload, targetOrigin || '*'); } catch (e) {} 
+        return; 
+      }
       document.querySelectorAll('iframe').forEach(f => {
-        PROFILE_SYNC_ORIGINS.forEach(o => { try { f.contentWindow && f.contentWindow.postMessage(payload, o); } catch (e) {} });
+        PROFILE_SYNC_ORIGINS.forEach(o => { 
+          try { f.contentWindow && f.contentWindow.postMessage(payload, o); } catch (e) {} 
+        });
       });
     }
-    // Other sites can ask for the profile when they load
+
+    // Other sites/iframes can ask for the profile when they initialize
     window.addEventListener('message', (e) => {
       if (!PROFILE_SYNC_ORIGINS.includes(e.origin)) return;
       if (e.data && e.data.type === 'fruiti-profile-request') sendProfileToFrames(e.source, e.origin);
@@ -365,12 +389,10 @@
       sendProfileToFrames();
     }
 
-    let currentProfileDeco = localStorage.getItem('fruitiger_profile_deco') || 'https://cherrion.top/elements/pfpdeco/whiteroses.png';
-
     function updateProfileDecoDisplay(url) {
       currentProfileDeco = url;
       localStorage.setItem('fruitiger_profile_deco', currentProfileDeco);
-      if (typeof sendProfileToFrames === 'function') sendProfileToFrames();
+      sendProfileToFrames();
       
       const profileBtn = document.querySelector('[data-nav-id="profile"]');
       if (profileBtn) {
@@ -391,7 +413,7 @@
 
     const appUrls = {
       browser: 'https://scramjet-hazel-gamma.vercel.app/',
-      chat: 'https://global-chat-plum.vercel.app/',
+      chat: 'https://global-chat-virid-three.vercel.app/',
       games: 'APP/gamehub.html',
       music: 'APP/music.html',
       movies: 'https://school-rgb.github.io/frutimovies/',
@@ -606,6 +628,7 @@
         updateProfileDecoDisplay(setupDecoSelect.value);
         localStorage.setItem('fruitiger_setup_key', CURRENT_SETUP_KEY);
         setupModal.classList.add('hidden');
+        sendProfileToFrames();
       });
 
       const setupNeeded = () => localStorage.getItem('fruitiger_setup_key') !== CURRENT_SETUP_KEY;
@@ -836,6 +859,8 @@
               if (iframeEl) iframeEl.classList.remove('opacity-0');
             }, 500);
           };
+
+          // Send current profile payload as soon as the iframe loads
           iframeEl.addEventListener('load', () => sendProfileToFrames());
           iframeEl.addEventListener('load', handleLoaded);
           setTimeout(handleLoaded, 2500);

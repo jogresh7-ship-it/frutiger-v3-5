@@ -151,6 +151,33 @@
     </div>
   </div>
 
+
+  <!-- SETUP MODAL (no close / skip) -->
+  <div id="setupModal" class="fixed inset-0 bg-black/60 backdrop-blur-[2px] z-[110] flex items-center justify-center hidden">
+    <div class="w-full max-w-md bg-[#121212] border border-[#2a2a2a] rounded-2xl p-6 shadow-2xl flex flex-col relative text-left">
+      <div class="text-xs font-bold tracking-[0.2em] text-mono-300 uppercase mb-4 flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-sm bg-white inline-block"></span> SET UP YOUR PROFILE
+      </div>
+      <div class="text-xs text-mono-400 font-sans space-y-4">
+        <div class="flex flex-col gap-2">
+          <label for="setupNameInput" class="text-[10px] font-bold uppercase tracking-widest text-mono-300">Name</label>
+          <input id="setupNameInput" type="text" maxlength="15" placeholder="Enter your name..." class="w-full bg-[#141414] border border-white/10 rounded-lg px-3 py-3 text-xs text-white focus:outline-none focus:border-white">
+        </div>
+        <div class="flex flex-col gap-2">
+          <label for="setupDecoSelect" class="text-[10px] font-bold uppercase tracking-widest text-mono-300">Profile Frame</label>
+          <select id="setupDecoSelect" class="w-full bg-[#141414] border border-white/10 rounded-lg px-3 py-3 text-xs text-white focus:outline-none focus:border-white cursor-pointer"></select>
+        </div>
+        <div class="flex items-center justify-center py-2">
+          <div class="relative w-[46px] h-[46px] flex items-center justify-center">
+            <img id="setupDecoPreview" src="" alt="" class="absolute inset-0 w-full h-full object-contain pointer-events-none z-20">
+            <div id="setupInitialPreview" class="w-8 h-8 rounded-full bg-[#1f1f1f] border border-[#333] text-white text-xs font-bold flex items-center justify-center">?</div>
+          </div>
+        </div>
+        <button id="setupContinueBtn" disabled class="w-full py-3 bg-white text-black font-bold text-xs uppercase rounded-lg active:scale-95 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed">CONTINUE</button>
+      </div>
+    </div>
+  </div>
+
   <!-- 100% Viewport Height Sidebar (w-[52px]) -->
   <aside id="sidebar" class="h-screen w-[52px] bg-[#0a0a0a] border-r border-[#1a1a1a] flex flex-col justify-between items-center py-4 relative z-50 select-none shrink-0">
 
@@ -296,7 +323,9 @@
 
   <!-- Application JavaScript Logic -->
   <script>
-    const CURRENT_NEWS_KEY = 'v3_update1_new_gui'; 
+    const CURRENT_NEWS_KEY = 'v4_update2_profile_setup'; 
+    const CURRENT_SETUP_KEY = 'v4_update2_profile_setup';
+    const PROFILE_SYNC_ORIGINS = ['https://frutichat.vercel.app']; // sites that receive your profile
     const SAVED_NEWS_KEY = localStorage.getItem('fruitiger_news_key') || '';
     const SAVED_WALLPAPER = localStorage.getItem('fruitiger_wallpaper') || '';
     const SAVED_LOOP_SETTING = localStorage.getItem('fruitiger_video_loop') !== 'false';
@@ -308,6 +337,24 @@
     if (favEl) favEl.href = SAVED_FAVICON;
 
     let currentUsername = localStorage.getItem('fruitiger_username') || 'username';
+
+    // ===== PROFILE SYNC (postMessage to other websites) =====
+    function getProfilePayload() {
+      return { type: 'fruiti-profile', name: currentUsername, iframe: currentProfileDeco, updatedAt: Date.now() };
+    }
+    function sendProfileToFrames(targetWin, targetOrigin) {
+      const payload = getProfilePayload();
+      if (targetWin) { try { targetWin.postMessage(payload, targetOrigin || '*'); } catch (e) {} return; }
+      document.querySelectorAll('iframe').forEach(f => {
+        PROFILE_SYNC_ORIGINS.forEach(o => { try { f.contentWindow && f.contentWindow.postMessage(payload, o); } catch (e) {} });
+      });
+    }
+    // Other sites can ask for the profile when they load
+    window.addEventListener('message', (e) => {
+      if (!PROFILE_SYNC_ORIGINS.includes(e.origin)) return;
+      if (e.data && e.data.type === 'fruiti-profile-request') sendProfileToFrames(e.source, e.origin);
+    });
+
     function updateUsernameDisplay(name) {
       currentUsername = name || 'username';
       localStorage.setItem('fruitiger_username', currentUsername);
@@ -315,6 +362,7 @@
       if (initialEl) {
         initialEl.textContent = currentUsername.charAt(0).toUpperCase();
       }
+      sendProfileToFrames();
     }
 
     let currentProfileDeco = localStorage.getItem('fruitiger_profile_deco') || 'https://cherrion.top/elements/pfpdeco/whiteroses.png';
@@ -322,6 +370,7 @@
     function updateProfileDecoDisplay(url) {
       currentProfileDeco = url;
       localStorage.setItem('fruitiger_profile_deco', currentProfileDeco);
+      if (typeof sendProfileToFrames === 'function') sendProfileToFrames();
       
       const profileBtn = document.querySelector('[data-nav-id="profile"]');
       if (profileBtn) {
@@ -492,13 +541,85 @@
       const closeNewsBtn = document.getElementById('closeNewsBtn');
       const newsModalBtn = document.getElementById('newsModalBtn');
 
+      const setupModal = document.getElementById('setupModal');
+      const setupNameInput = document.getElementById('setupNameInput');
+      const setupDecoSelect = document.getElementById('setupDecoSelect');
+      const setupDecoPreview = document.getElementById('setupDecoPreview');
+      const setupInitialPreview = document.getElementById('setupInitialPreview');
+      const setupContinueBtn = document.getElementById('setupContinueBtn');
+
+      const DEFAULT_DECOS = [
+        { label: 'White Roses', url: 'https://cherrion.top/elements/pfpdeco/whiteroses.png' },
+        { label: 'None (Plain)', url: '' }
+      ];
+      const formatDecoLabel = n => n.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
+
+      function fillDecoOptions(list) {
+        setupDecoSelect.innerHTML = '';
+        list.forEach(d => {
+          const opt = document.createElement('option');
+          opt.value = d.url;
+          opt.textContent = d.label;
+          setupDecoSelect.appendChild(opt);
+        });
+        const has = list.some(d => d.url === currentProfileDeco);
+        setupDecoSelect.value = has ? currentProfileDeco : list[0].url;
+        refreshSetupPreview();
+      }
+
+      function refreshSetupPreview() {
+        const url = setupDecoSelect.value;
+        setupDecoPreview.style.display = url ? 'block' : 'none';
+        if (url) setupDecoPreview.src = url;
+        const n = setupNameInput.value.trim();
+        setupInitialPreview.textContent = n ? n.charAt(0).toUpperCase() : '?';
+        setupContinueBtn.disabled = !n;
+      }
+
+      function openSetup() {
+        setupNameInput.value = currentUsername !== 'username' ? currentUsername : '';
+        fillDecoOptions(DEFAULT_DECOS);
+        fetch('https://api.github.com/repos/school-rgb/frutigprof/contents')
+          .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+          .then(data => {
+            const files = data.filter(f => /\.(png)$/i.test(f.name))
+              .map(f => ({ label: formatDecoLabel(f.name), url: f.download_url }));
+            if (files.length) fillDecoOptions([{ label: 'None (Plain)', url: '' }, ...files]);
+          })
+          .catch(() => {});
+        setupModal.classList.remove('hidden');
+        setupNameInput.focus();
+      }
+
+      setupNameInput.addEventListener('input', refreshSetupPreview);
+      setupDecoSelect.addEventListener('change', refreshSetupPreview);
+      setupNameInput.addEventListener('keydown', e => { if (e.key === 'Enter' && !setupContinueBtn.disabled) setupContinueBtn.click(); });
+      // No close/skip: block Escape and clicking outside
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !setupModal.classList.contains('hidden')) e.preventDefault();
+      });
+
+      setupContinueBtn.addEventListener('click', () => {
+        const name = setupNameInput.value.trim();
+        if (!name) return;
+        updateUsernameDisplay(name);
+        updateProfileDecoDisplay(setupDecoSelect.value);
+        localStorage.setItem('fruitiger_setup_key', CURRENT_SETUP_KEY);
+        setupModal.classList.add('hidden');
+      });
+
+      const setupNeeded = () => localStorage.getItem('fruitiger_setup_key') !== CURRENT_SETUP_KEY;
+
       if (SAVED_NEWS_KEY !== CURRENT_NEWS_KEY) {
         newsModal.classList.remove('hidden');
+      } else if (setupNeeded()) {
+        openSetup();
       }
 
       closeNewsBtn.addEventListener('click', () => {
         newsModal.classList.add('hidden');
         localStorage.setItem('fruitiger_news_key', CURRENT_NEWS_KEY);
+        if (setupNeeded()) openSetup();
       });
 
       newsModalBtn.addEventListener('click', () => {
@@ -715,6 +836,7 @@
               if (iframeEl) iframeEl.classList.remove('opacity-0');
             }, 500);
           };
+          iframeEl.addEventListener('load', () => sendProfileToFrames());
           iframeEl.addEventListener('load', handleLoaded);
           setTimeout(handleLoaded, 2500);
 

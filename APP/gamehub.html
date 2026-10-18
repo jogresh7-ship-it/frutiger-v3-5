@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <base href="https://cdn.jsdelivr.net/gh/freebuisness/gn-math-DONTDMCA@main/">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
@@ -26,12 +25,10 @@
     <meta name="description" content="Play unblocked games on Fruit Games. Fast, free, no downloads—perfect for school or home.">
 
     <style>
-        /* Custom TTF Font Definition with Relative and Root Fallbacks */
+        /* Custom Local TTF Font Definition */
         @font-face {
             font-family: 'GNFFont';
-            src: url('/APPFONT/gnf.regular.ttf') format('truetype'),
-                 url('APPFONT/gnf.regular.ttf') format('truetype'),
-                 url('./APPFONT/gnf.regular.ttf') format('truetype');
+            src: url('APPFONT/gnf.regular.ttf') format('truetype');
             font-weight: normal;
             font-style: normal;
             font-display: swap;
@@ -75,59 +72,12 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* Minimalist Blurry Splash Screen Container */
-        #appSplash {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.65);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.4s ease;
-        }
-
-        .splash-inner {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Circular Spinner Animation */
-        .spinner {
-            width: 32px;
-            height: 32px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-top-color: #ffffff;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            margin-top: 14px;
-            color: #ffffff;
-            font-size: 13px;
-            letter-spacing: 3px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
         header {
             background: transparent;
             color: white;
             position: relative;
             z-index: 100;
-            border-bottom: 1px solid var(--border);
-            padding-top: 3.5rem;
+            padding-top: 1.5rem;
         }
 
         .header-content {
@@ -140,61 +90,39 @@
             align-items: center;
         }
 
-        .logo-banner {
-            background: rgba(28, 28, 30, 0.8);
-            backdrop-filter: blur(8px);
-            padding: 6px 18px 6px 8px;
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #ffffff;
-            border: 1px solid #3a3a3c;
-            position: fixed;
-            top: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
-        }
-
-        .logo-banner img {
-            width: 26px;
-            height: 26px;
-            object-fit: cover;
-            border-radius: 50%;
-            background: #2c2c2e;
-        }
-
         .search-container {
             display: flex;
             width: 100%;
-            max-width: 100%;
+            max-width: 800px;
             align-items: center;
         }
 
+        /* Fully Custom Text Box using Local Font */
         #searchBar {
             width: 100%;
-            padding: 0.875rem 1.25rem;
-            border: 1px solid #26262a;
+            padding: 1rem 1.5rem;
+            border: 2px solid #3a3a42;
             border-radius: var(--radius);
-            background: rgba(28, 28, 30, 0.8);
-            color: var(--text);
-            font-size: 15px;
+            background: rgba(20, 20, 24, 0.85);
+            color: #ffffff;
+            font-family: 'GNFFont', sans-serif !important;
+            font-size: 16px;
+            letter-spacing: 0.5px;
             outline: none;
-            transition: all 0.3s ease;
+            transition: all 0.25s ease-in-out;
             text-align: left;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
         #searchBar:focus {
-            border-color: #666666;
-            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+            border-color: #ffffff;
+            background: rgba(30, 30, 36, 0.95);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
 
         #searchBar::placeholder {
-            color: #8e8e93;
+            color: #71717a;
+            font-family: 'GNFFont', sans-serif !important;
         }
 
         main {
@@ -318,9 +246,7 @@
         }
 
         body.app-fullscreen-mode header,
-        body.app-fullscreen-mode main,
-        body.app-fullscreen-mode .logo-banner,
-        body.app-fullscreen-mode #appSplash {
+        body.app-fullscreen-mode main {
             display: none !important;
         }
 
@@ -345,18 +271,6 @@
     <meta name="theme-color" content="#000000">
 </head>
 <body class="dark-mode">
-
-    <!-- Minimalist Spinner Splash Screen with Blurry Backdrop -->
-    <div id="appSplash">
-        <div class="splash-inner">
-            <div class="spinner"></div>
-            <div class="loading-text">LOADING...</div>
-        </div>
-    </div>
-
-    <div class="logo-banner">
-        <img src="https://github.com/school-rgb/frutiger-logo/blob/main/Screenshot%202026-09-19%202.03.59%20PM.png?raw=true" alt="Fruit Games Logo"> Fruit Games
-    </div>
 
     <header>
         <div class="header-content">
@@ -413,14 +327,6 @@
                     openZone(foundZone);
                 }
             }
-
-            setTimeout(() => {
-                const splash = document.getElementById('appSplash');
-                if (splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => splash.remove(), 400);
-                }
-            }, 1000);
         });
 
         async function listZones() {

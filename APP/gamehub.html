@@ -4,13 +4,6 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
-    <script>
-        window.addEventListener('beforeunload', function (event) {
-            event.preventDefault();
-            event.returnValue = '';
-            return 'Are you sure you want to leave? Any unsaved changes will be lost.';
-        });
-    </script>
     <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-WX5VS54ZDW"></script>
     <script>
         window.dataLayer = window.dataLayer || [];
@@ -150,6 +143,11 @@
             width: 100%;
         }
 
+        .zone-box-wrap {
+            position: relative;
+            width: 100%;
+        }
+
         .zone-box {
             width: 100%;
             aspect-ratio: 1 / 1;
@@ -165,6 +163,36 @@
             border-color: #666;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
         }
+
+        /* Install button shown on each game card */
+        .install-btn {
+            position: absolute;
+            right: 8px;
+            bottom: 8px;
+            padding: 5px 10px;
+            border: 1px solid #555;
+            border-radius: 999px;
+            background: rgba(10, 10, 10, 0.85);
+            color: #fff;
+            font-size: 11px;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+            backdrop-filter: blur(6px);
+        }
+
+        .zone-item:hover .install-btn,
+        .install-btn:focus,
+        .install-btn.done,
+        .install-btn.busy {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .install-btn:hover { background: #fff; color: #000; }
+        .install-btn.done { background: #fff; color: #000; }
+        .install-btn:disabled { cursor: default; }
 
         .zone-item .zone-name {
             color: #ffffff;
@@ -284,7 +312,7 @@
         <div id="container">Loading...</div>
     </main>
 
-    <!-- Game Viewer with Fullscreen, New Tab, and Close buttons -->
+    <!-- Game Viewer with Install, Fullscreen, New Tab, and Close buttons -->
     <div id="zoneViewer">
         <div class="zone-header">
             <div class="zone-title">
@@ -293,12 +321,13 @@
                 <a id="zoneAuthor" href="#" target="_blank">by Author</a>
             </div>
             <div class="zone-controls">
+                <button id="installCurrentBtn" onclick="installCurrent()">Install</button>
                 <button onclick="fullscreenZone()">Fullscreen</button>
                 <button onclick="aboutBlank()">New Tab</button>
                 <button onclick="closeZone()">Close</button>
             </div>
         </div>
-        <iframe id="zoneFrame"></iframe>
+        <iframe id="zoneFrame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals allow-downloads allow-presentation allow-orientation-lock" allow="autoplay; fullscreen; gamepad; microphone; camera"></iframe>
     </div>
 
     <script>
@@ -313,6 +342,15 @@
         const fruitsHtmlURL = "https://cdn.jsdelivr.net/gh/school-rgb/html@main";
 
         let zones = [];
+
+        // Games run in a sandbox WITHOUT "allow-top-navigation": a game can no longer redirect or
+        // replace the whole page (frame-busting scripts just fail quietly), so the "Leave site?"
+        // prompt never fires because of a game.
+        const GAME_SANDBOX = "allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals allow-downloads allow-presentation allow-orientation-lock";
+        function applyGameSandbox(frame) {
+            frame.setAttribute('sandbox', GAME_SANDBOX);
+            frame.setAttribute('allow', 'autoplay; fullscreen; gamepad; microphone; camera');
+        }
 
         window.addEventListener('load', async () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -365,15 +403,30 @@
 
                 const coverImgUrl = file.cover ? file.cover.replace("{COVER_URL}", fruitsCoverURL).replace("{HTML_URL}", fruitsHtmlURL) : '';
 
+                const wrap = document.createElement("div");
+                wrap.className = "zone-box-wrap";
+
                 const box = document.createElement("div");
                 box.className = "zone-box";
                 box.style.backgroundImage = `url('${coverImgUrl}')`;
+
+                const installBtn = document.createElement("button");
+                installBtn.className = "install-btn";
+                installBtn.type = "button";
+                setInstallLabel(installBtn, file);
+                installBtn.onclick = (ev) => {
+                    ev.stopPropagation();
+                    installZone(file, installBtn);
+                };
+
+                wrap.appendChild(box);
+                wrap.appendChild(installBtn);
 
                 const nameEl = document.createElement("h3");
                 nameEl.className = "zone-name";
                 nameEl.textContent = file.name;
 
-                zoneItem.appendChild(box);
+                zoneItem.appendChild(wrap);
                 zoneItem.appendChild(nameEl);
                 container.appendChild(zoneItem);   
             });
@@ -393,6 +446,7 @@
             if (!zoneFrame || zoneFrame.contentDocument === null) {
                 zoneFrame = document.createElement("iframe");
                 zoneFrame.id = "zoneFrame";
+                applyGameSandbox(zoneFrame);
                 zoneViewer.appendChild(zoneFrame);
             }
 
@@ -440,6 +494,7 @@
             document.getElementById('zoneName').textContent = file.name;
             document.getElementById('zoneId').textContent = file.id;
             document.getElementById('zoneAuthor').textContent = "by " + (file.author || "Unknown");
+            setInstallLabel(document.getElementById('installCurrentBtn'), file);
             
             zoneViewer.style.display = "flex";
             
@@ -493,6 +548,108 @@
         HTMLCanvasElement.prototype.toDataURL = function () {
             return "";
         };
+
+        /* ================= INSTALL GAME TO FRUIT-OS ================= */
+        // Same cleaning the OS applies, so we can tell which games are already installed.
+        function cleanGameName(n) {
+            return String(n || 'Game').replace(/[<>&"'`\\]/g, '').trim().slice(0, 40) || 'Game';
+        }
+
+        function isInstalled(file) {
+            try {
+                return window.parent !== window && window.parent.GAMES.some(g => g.title === cleanGameName(file.name));
+            } catch (e) { return false; }
+        }
+
+        function setInstallLabel(btn, file) {
+            if (!btn) return;
+            btn.classList.remove('busy', 'done');
+            btn.disabled = false;
+            btn.textContent = isInstalled(file) ? 'Update' : 'Install';
+        }
+
+        function resolveGameUrl(u) {
+            return String(u || '').replace("{COVER_URL}", fruitsCoverURL).replace("{HTML_URL}", fruitsHtmlURL);
+        }
+
+        // Builds the game's full HTML code (what the OS stores and runs).
+        async function buildGameHtml(file) {
+            const url = resolveGameUrl(file.url);
+
+            // Games hosted on another site: wrap them in a full-window frame so any kind of page runs.
+            if (/^https?:/i.test(file.url)) {
+                const safe = url.replace(/"/g, '%22');
+                return '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>html,body,iframe{margin:0;padding:0;width:100%;height:100%;border:0;background:#000;overflow:hidden}</style></head><body><iframe src="' + safe + '" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-pointer-lock allow-modals allow-downloads allow-presentation allow-orientation-lock" allowfullscreen allow="autoplay; fullscreen; gamepad; microphone; camera"></iframe></body></html>';
+            }
+
+            const abs = new URL(url, location.href).href;
+            const res = await fetch(abs + "?t=" + Date.now());
+            if (!res.ok) throw new Error("Game file not found (" + res.status + ")");
+            let html = await res.text();
+            html = html.replace(/<script>\s*\(function\(ykJYJgqRQvLQ[\s\S]*?<\/script>/g, '');
+            // <base> lets the game's own images, scripts and css keep loading from where they live
+            const base = '<base href="' + abs.replace(/"/g, '%22') + '">';
+            return /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, m => m + base) : base + html;
+        }
+
+        // Sends {name, icon, html} to Fruit-OS, which turns it into an app.
+        function sendToOS(game) {
+            return new Promise((resolve, reject) => {
+                try {
+                    if (window.parent !== window && typeof window.parent.installGame === "function") {
+                        window.parent.installGame(game).then(resolve, reject);
+                        return;
+                    }
+                } catch (e) { /* cross-origin: fall back to postMessage */ }
+
+                if (window.parent === window) {
+                    reject(new Error("Open Fruit Games inside Fruit-OS to install games."));
+                    return;
+                }
+
+                let timer;
+                function onMsg(ev) {
+                    if (!ev.data || ev.data.type !== "fruit-install-result") return;
+                    window.removeEventListener("message", onMsg);
+                    clearTimeout(timer);
+                    ev.data.ok ? resolve(ev.data.id) : reject(new Error(ev.data.error || "Install failed"));
+                }
+                timer = setTimeout(() => {
+                    window.removeEventListener("message", onMsg);
+                    reject(new Error("No response from Fruit-OS"));
+                }, 15000);
+                window.addEventListener("message", onMsg);
+                window.parent.postMessage({ type: "fruit-install-game", game: game }, "*");
+            });
+        }
+
+        async function installZone(file, btn) {
+            if (!btn || btn.disabled) return;
+            btn.disabled = true;
+            btn.classList.add('busy');
+            btn.textContent = 'Installing...';
+            try {
+                const html = await buildGameHtml(file);
+                const icon = file.cover ? resolveGameUrl(file.cover) : '';
+                await sendToOS({ name: file.name, icon: icon, html: html });
+                btn.classList.remove('busy');
+                btn.classList.add('done');
+                btn.textContent = 'Installed ✓';
+                setTimeout(() => setInstallLabel(btn, file), 2500);
+            } catch (err) {
+                console.error(err);
+                btn.classList.remove('busy', 'done');
+                btn.textContent = (window.parent === window) ? 'Open in Fruit-OS' : 'Failed';
+                setTimeout(() => setInstallLabel(btn, file), 3000);
+            }
+        }
+
+        function installCurrent() {
+            const id = document.getElementById('zoneId').textContent;
+            const file = zones.find(z => z.id + '' === id);
+            if (file) installZone(file, document.getElementById('installCurrentBtn'));
+        }
+        /* =============== END INSTALL GAME TO FRUIT-OS =============== */
     </script>
 
 <script>

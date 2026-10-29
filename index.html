@@ -1410,10 +1410,11 @@ function wpListViaJsDelivr() {
     });
 }
 // Checks the repo for new/removed wallpapers (at most once every 5 minutes; the list is cached).
-function refreshWallpapersFromRepo() {
+function refreshWallpapersFromRepo(maxAgeMs, done) {
+    if(maxAgeMs === undefined) maxAgeMs = 5 * 60 * 1000;
     try {
         let c = JSON.parse(localStorage.getItem('cine_wp_cache_v4'));
-        if(c && c.files && c.files.length && Date.now() - c.t < 5 * 60 * 1000) return;
+        if(maxAgeMs > 0 && c && c.files && c.files.length && Date.now() - c.t < maxAgeMs) { if(done) done(false); return; }
     } catch(e) {}
     // Ask the recursive tree and jsDelivr at the same time and combine them; fall back to the folder walk.
     let safe = function(fn) { return fn().catch(function() { return []; }); };
@@ -1423,12 +1424,13 @@ function refreshWallpapersFromRepo() {
         if(uniq.length) return uniq;
         return wpListViaGitHub();
     }).then(function(files) {
-        if(!files || !files.length) return;
+        if(!files || !files.length) { if(done) done(false); return; }
         let beforeH = wpResolveKey(sysConfig.homeWallpaper, 0), beforeL = wpResolveKey(sysConfig.lockWallpaper, 1);
         localStorage.setItem('cine_wp_cache_v4', JSON.stringify({t: Date.now(), files: files}));
         wallpaperRegistry = wpBuildRegistry(files);
         if(wpResolveKey(sysConfig.homeWallpaper, 0) !== beforeH || wpResolveKey(sysConfig.lockWallpaper, 1) !== beforeL) initWallpapers();
-    }).catch(function() {});
+        if(done) done(true);
+    }).catch(function() { if(done) done(false); });
 }
 
 var sysConfig = JSON.parse(localStorage.getItem('cine_sys_config')) || {};
@@ -2509,15 +2511,18 @@ function setWallpaper(k, noti=false) {
     openWallpaperMenu();
 }
 
-function openWallpaperMenu() {
+function openWallpaperMenu(noRefresh) {
     let m = document.getElementById('wallpaper-menu');
     let gu = document.getElementById('wp-grid-unlocked');
     let gl = document.getElementById('wp-grid-locked');
     if(!m) return;
     
-    if(m.showModal) m.showModal();
+    if(m.showModal) { if(!m.open) m.showModal(); }
     else m.style.display = 'flex';
     m.classList.add('open');
+    
+    // Pull in any wallpapers added to the repo since the list was last cached.
+    if(!noRefresh) refreshWallpapersFromRepo(30 * 1000, function(changed) { if(changed && m.classList.contains('open')) openWallpaperMenu(true); });
     
     gu.innerHTML = '';
     gl.innerHTML = '';
@@ -3005,4 +3010,3 @@ requestAnimationFrame(chkFps);
 </script>
 </body>
 </html>
-  

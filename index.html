@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Fruit-OS </title>
+  <title>Fruit-OS V2</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
   
   
@@ -750,7 +750,7 @@ details.thought-process summary::before { content: "🧠"; font-size: 15px; }
 #wallpaper-menu.open { display: flex; opacity: 1; transform: translate(-50%,-50%) scale(1); }
 .wp-modal-header { border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
 .wp-modal-header h2 { font-family: 'Orbitron'; color: #fff; letter-spacing: 2px; margin: 0; }
-.wp-controls-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.wp-controls-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
 .segmented-control { display: flex; background: #222; border: 1px solid #333; border-radius: 8px; padding: 4px; gap: 4px; border-style: solid; }
 .segmented-control label { flex: 1; text-align: center; cursor: pointer; }
 .segmented-control input[type="radio"] { display: none; }
@@ -892,7 +892,7 @@ input:checked + .slider:before { transform: translateX(20px); background-color: 
 <!-- Modals -->
 <dialog id="wallpaper-menu" aria-label="Wallpaper Settings">
   <header class="wp-modal-header">
-    <h2>WALLPAPER PROTOCOLS</h2>
+    <h2>WALLPAPER</h2>
     <i class="fas fa-times close-icon" role="button" tabindex="0" onclick="var menu = document.getElementById('wallpaper-menu'); menu.classList.remove('open'); if (menu.close) { menu.close(); }"></i>
   </header>
   
@@ -906,7 +906,14 @@ input:checked + .slider:before { transform: translateX(20px); background-color: 
     <div class="loop-toggle-container">
       <span class="loop-label">Loop Wallpaper</span>
       <label class="switch wp-loop-switch">
-        <input type="checkbox" id="wp-loop-chk">
+        <input type="checkbox" id="wp-loop-home-chk">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="loop-toggle-container">
+      <span class="loop-label">Loop Lock Screen</span>
+      <label class="switch wp-loop-switch">
+        <input type="checkbox" id="wp-loop-lock-chk">
         <span class="slider"></span>
       </label>
     </div>
@@ -914,8 +921,7 @@ input:checked + .slider:before { transform: translateX(20px); background-color: 
 
   <div class="wp-grid-container">
     <div id="wp-grid-unlocked" class="wp-grid"></div>
-    <h3 class="wp-section-title">Encrypted</h3>
-    <div id="wp-grid-locked" class="wp-grid"></div>
+    <div id="wp-grid-locked" class="wp-grid" style="display:none"></div>
   </div>
 </dialog>
 
@@ -1237,12 +1243,12 @@ window.installGame = function(info) {
     }
     return GameStore.put(g.id, info.html).then(function() {
         saveGamesMeta();
-        if(isNew) { registerGameApp(g); APPS[g.id].pinned = true; } else { APPS[g.id].icon = icon; }
+        if(isNew) { registerGameApp(g); } else { APPS[g.id].icon = icon; }
         syncPins();
         renderUI();
         let w = document.getElementById('win-' + g.id);
         if(w) { let f = w.querySelector('iframe'); if(f) f.srcdoc = info.html; }
-        showNotification(isNew ? 'Game Installed' : 'Game Updated', title + (isNew ? ' was added to your dock and app drawer.' : ' was updated.'));
+        showNotification(isNew ? 'Game Installed' : 'Game Updated', title + (isNew ? ' was added to your app drawer.' : ' was updated.'));
         return g.id;
     }).catch(function(err) {
         // roll back a brand-new entry if saving the code failed
@@ -1429,7 +1435,8 @@ var sysConfig = JSON.parse(localStorage.getItem('cine_sys_config')) || {};
 if(sysConfig.optBg === undefined) sysConfig.optBg = false;
 if(sysConfig.shortBoot === undefined) sysConfig.shortBoot = false;
 if(sysConfig.hideBoxes === undefined) sysConfig.hideBoxes = !!(sysConfig.hideFpsBox || sysConfig.hideDockBox);
-if(sysConfig.wpLoop === undefined) sysConfig.wpLoop = false;
+if(sysConfig.wpLoopHome === undefined) sysConfig.wpLoopHome = !!sysConfig.wpLoop;
+if(sysConfig.wpLoopLock === undefined) sysConfig.wpLoopLock = !!sysConfig.wpLoop;
 if(sysConfig.idleLock === undefined) sysConfig.idleLock = false; 
 if(sysConfig.redirectConfirm === undefined) sysConfig.redirectConfirm = false; 
 if(!sysConfig.homeWallpaper) sysConfig.homeWallpaper = Object.keys(wallpaperRegistry)[0];
@@ -1440,7 +1447,7 @@ window.updateSysSetting = function(key, value) {
     sysConfig[key] = value;
     localStorage.setItem('cine_sys_config', JSON.stringify(sysConfig));
     if(key === 'optBg') applySystemSettings();
-    if(key === 'wpLoop') updateWallpaperLoop();
+    if(key === 'wpLoopHome' || key === 'wpLoopLock') updateWallpaperLoop();
     if(key === 'hideBoxes') applyBoxSettings();
 };
 function applyBoxSettings() {
@@ -1750,15 +1757,17 @@ function initWallpapers() {
     if(lk) applyMediaToElements(wallpaperRegistry[lk].url, lV, lI, false);
     
     updateWallpaperLoop();
-    let wChk = document.getElementById('wp-loop-chk');
-    if(wChk) wChk.checked = sysConfig.wpLoop;
+    let wChkH = document.getElementById('wp-loop-home-chk');
+    if(wChkH) wChkH.checked = sysConfig.wpLoopHome;
+    let wChkL = document.getElementById('wp-loop-lock-chk');
+    if(wChkL) wChkL.checked = sysConfig.wpLoopLock;
 }
 
 function updateWallpaperLoop() {
     let bV = document.getElementById('bg-video');
     let lV = document.getElementById('lock-video');
-    if(bV) bV.loop = sysConfig.wpLoop;
-    if(lV) lV.loop = sysConfig.wpLoop;
+    if(bV) bV.loop = sysConfig.wpLoopHome;
+    if(lV) lV.loop = sysConfig.wpLoopLock;
     if(!sysConfig.optBg && isDesktopActive && bV && bV.paused && bV.style.display !== 'none') {
         bV.play().catch(function(e){});
     }
@@ -2539,10 +2548,15 @@ function openWallpaperMenu() {
         }
     }
     
-    let chk = document.getElementById('wp-loop-chk');
-    if(chk) {
-        chk.checked = sysConfig.wpLoop;
-        chk.onchange = e => updateSysSetting('wpLoop', e.target.checked);
+    let chkH = document.getElementById('wp-loop-home-chk');
+    if(chkH) {
+        chkH.checked = sysConfig.wpLoopHome;
+        chkH.onchange = e => updateSysSetting('wpLoopHome', e.target.checked);
+    }
+    let chkL = document.getElementById('wp-loop-lock-chk');
+    if(chkL) {
+        chkL.checked = sysConfig.wpLoopLock;
+        chkL.onchange = e => updateSysSetting('wpLoopLock', e.target.checked);
     }
 }
 
@@ -2991,3 +3005,4 @@ requestAnimationFrame(chkFps);
 </script>
 </body>
 </html>
+  

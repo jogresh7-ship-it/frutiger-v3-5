@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<title>ani.pm</title>
+<style>
+:root{--bg:#000;--surface:#121214;--line:#26262b;--text:#f2f2f4;--muted:#9a9aa5;--accent:#ff4f7b}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.5 "Trebuchet MS","Segoe UI",system-ui,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:root{--sb:232px}
+body{padding-left:var(--sb)}
+.side{position:fixed;left:12px;top:12px;bottom:12px;width:204px;z-index:6;background:#0c0c0e;border:1px solid var(--line);border-radius:18px;padding:16px 12px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+nav.main{display:flex;flex-direction:column;gap:6px;color:var(--muted)}
+nav.main a{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;font-size:15px;font-weight:600;transition:background .15s,color .15s}
+nav.main a svg{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+nav a:hover,nav a.on{color:var(--text)}
+nav.main a:hover{background:var(--surface)}
+nav.main a.on{background:var(--accent);color:#fff}
+.hs{display:flex}.hs input{background:var(--surface);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:10px 14px;font:inherit;width:100%;border-radius:10px}
+.btn{background:var(--accent);color:#fff;border:0;border-radius:8px;padding:8px 16px;font-weight:700}
+.btn.alt{background:var(--surface);color:var(--text);border:1px solid var(--line)}
+.burger{display:none;position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:10px;z-index:7;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:18px}
+main{max-width:1200px;margin:auto;padding:0 20px 60px;min-height:70vh}
+.hero{padding:48px 0 16px}
+h1{font-size:clamp(32px,6vw,56px);line-height:1.05;letter-spacing:-1.5px;max-width:14ch}
+.hero p{color:var(--muted);max-width:56ch;margin:16px 0 0}
+h2{font-size:22px;margin:32px 0 16px;display:flex;justify-content:space-between;align-items:baseline}
+h2 small,.muted{font-size:14px;color:var(--muted);font-weight:400}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.card{display:block;cursor:pointer}
+.poster{overflow:hidden;aspect-ratio:2/3;border-radius:10px;position:relative;display:flex;align-items:flex-end;padding:10px;font-weight:800;font-size:34px;line-height:1;color:rgba(255,255,255,.9);border:1px solid var(--line)}
+.card:hover .poster{outline:2px solid var(--accent)}
+.poster.hl::after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.8));border-radius:0 0 10px 10px;pointer-events:none}
+.logo-img{position:absolute;z-index:1;left:8px;bottom:8px;max-width:calc(100% - 16px);max-height:30%;object-fit:contain;object-position:left bottom;filter:drop-shadow(0 2px 6px #000)}
+.dlogo{display:block;max-height:120px;max-width:min(420px,100%);object-fit:contain;object-position:left}
+html{overflow-x:hidden}
+.hb{position:relative;left:50%;margin-left:calc(var(--sb) / 2 - 50vw);width:calc(100vw - var(--sb));height:min(78vh,720px);min-height:420px;overflow:hidden;background:#000}
+.hb.skel{background:linear-gradient(120deg,#0e0e12,#1b1b24)}
+.slide{position:absolute;inset:0;display:flex;align-items:center;transition:transform .75s cubic-bezier(.65,0,.35,1);will-change:transform;background:#000}
+.simg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.88),rgba(0,0,0,.35) 60%,rgba(0,0,0,.05)),linear-gradient(transparent 65%,#000)}
+.hbin{position:relative;z-index:1;max-width:1200px;width:100%;margin:auto;padding:48px 20px 60px;color:#fff}
+.htitle{font-size:clamp(30px,5vw,56px);max-width:16ch;line-height:1.05;letter-spacing:-1px}
+[data-lg] img{display:block;max-height:150px;max-width:min(520px,100%);object-fit:contain;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6))}
+.hb .chip{background:rgba(0,0,0,.55);color:#fff;border-color:transparent}
+.hdesc{max-width:56ch;color:#e8e8ee;margin:14px 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.hb .btn.play{background:#fff;color:#000;border-radius:999px;padding:12px 30px;font-size:18px}
+.round{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:rgba(0,0,0,.6);border:2px solid rgba(255,255,255,.35);color:#fff;font-size:22px;line-height:1;padding:0}
+.hb .actions{align-items:center}
+.pimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.mini{position:relative;overflow:hidden}
+.poster.wide{aspect-ratio:16/9;overflow:hidden}
+.gb img{width:100%;max-height:320px;object-fit:cover;border-radius:12px;display:block;margin-top:24px}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:24px;margin:20px 0;display:flex;flex-wrap:wrap;gap:12px;align-items:center}.drop.over{border-color:var(--accent)}
+.search2{display:flex;gap:8px;flex:1 1 320px}.search2 input{flex:1;background:var(--surface);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px 10px;font:inherit}
+.sr{display:flex;gap:14px;align-items:center;padding:10px;border-bottom:1px solid var(--line);border-radius:8px}.sr:hover{background:var(--surface)}
+.sr video{width:200px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:#000;flex:none}
+@media(max-width:760px){.sr video{width:120px}}
+.sent{padding:28px 0;text-align:center;color:var(--muted)}
+.cw{grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+@media(prefers-reduced-motion:reduce){.slide{transition:none}}
+@media(max-width:760px){.hb{height:68vh}[data-lg] img{max-height:100px}}
+.badge{z-index:1;position:absolute;top:8px;left:8px;font-size:11px;font-weight:700;background:rgba(0,0,0,.65);color:#fff;border-radius:4px;padding:1px 6px}
+.t{margin-top:8px;font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 16px}
+.chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-size:14px}
+.chip.on,.chip:hover{border-color:var(--accent);color:var(--accent)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin:24px 0 8px}
+select,.filters input{background:var(--surface);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:8px 10px;font:inherit}
+.pager{display:flex;gap:6px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+.pager button{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 12px}.pager .on{border-color:var(--accent);color:var(--accent)}
+.rows .row{display:flex;gap:14px;align-items:center;padding:10px;border-bottom:1px solid var(--line);border-radius:8px}
+.rows .row:hover{background:var(--surface)}
+.rows .mini{width:46px;aspect-ratio:2/3;border-radius:6px;flex:none}
+.rows [data-lg] img{max-height:36px;max-width:min(260px,100%);object-position:left;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6))}
+.rows .grow{flex:1;min-width:0}.rows .grow b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.detail{display:grid;grid-template-columns:240px 1fr;gap:28px;padding-top:32px}
+.detail .poster{font-size:64px}
+.detail h1{font-size:clamp(26px,4vw,40px);max-width:none;letter-spacing:-.5px}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:var(--surface);border:0;padding:7px 16px}.seg .on{background:var(--accent);color:#fff}
+.eps{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+.eps a{background:var(--surface);border:1px solid var(--line);border-radius:8px;text-align:center;padding:8px 0}
+.eps a:hover,.eps a.on{border-color:var(--accent);color:var(--accent)}
+.player{aspect-ratio:16/9;background:#050507;border:1px solid var(--line);border-radius:12px;overflow:hidden;position:relative;margin-top:24px}
+.player iframe{width:100%;height:100%;border:0}
+.pnav{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0}
+.empty{color:var(--muted);padding:40px 0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;place-items:center;z-index:20;padding:20px}
+.modal.open{display:grid}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;width:min(380px,100%)}
+.box h3{margin-bottom:14px}.box input{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:10px;margin-bottom:10px;font:inherit}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--accent);color:#fff;padding:8px 18px;border-radius:999px;display:none;z-index:30}
+footer{border-top:1px solid var(--line);padding:24px 20px;text-align:center;color:var(--muted);font-size:14px}
+footer nav{display:flex;gap:18px;justify-content:center;margin-bottom:8px;flex-wrap:wrap}
+@media(max-width:760px){
+ :root{--sb:0px}
+ .burger{display:block}
+ .side{left:0;top:0;bottom:0;width:250px;border-radius:0 18px 18px 0;transform:translateX(-110%);transition:transform .25s;padding-top:calc(64px + env(safe-area-inset-top,0px))}
+ .side.open{transform:translateX(0);box-shadow:0 0 40px rgba(0,0,0,.7)}
+ .detail{grid-template-columns:1fr}.detail .poster{max-width:200px}
+}
+.xg{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px}
+.xg a{display:block;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.xg img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.xg small{display:block;padding:6px 8px;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qt{border-left:3px solid var(--accent);padding:8px 14px;margin:12px 0;background:var(--surface);border-radius:0 8px 8px 0}
+.qt b{display:block;margin-top:4px;font-size:14px;color:var(--muted);font-weight:400}
+
+</style>
+</head>
+<body>
+<button class="burger" id="burger" aria-label="Menu">☰</button>
+<aside class="side" id="side">
+  <nav class="main" id="nav">
+    <a href="#/" data-r="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</a><a href="#/search" data-r="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Search</a><a href="#/latest" data-r="latest"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Latest episodes</a><a href="#/browse" data-r="browse"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Browse anime</a>
+  </nav>
+</aside>
+<main id="app"></main>
+<footer>
+  <nav><a href="#/">Home</a><a href="#/latest">Latest episodes</a><a href="#/browse">Browse anime</a></nav>
+  Anime data from <a href="https://anilist.co" target="_blank" rel="noopener" style="color:var(--accent)">AniList</a> · Ghibli films from ghibliapi.dev · scene search by trace.moe · extras from nekos.best, waifu.pics and Animechan · fallback art from Kitsu, Jikan and <a href="https://www.themoviedb.org" target="_blank" rel="noopener" style="color:var(--accent)">TMDB</a> · video stream integration via vidly.pro
+</footer>
+<div class="toast" id="toast"></div>
+<script>
+const IMG='https://image.tmdb.org/t/p/';
+const TMDB_KEY='3fd2be6f0c70a2a598f084ddfb75487c';
+const $=s=>document.querySelector(s),app=$('#app'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const hash=s=>{let h=7;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return h};
+const store={get(k,d){try{return JSON.parse(localStorage.getItem(k))||d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+let list=store.get('list2',[]),recent=store.get('recent2',[]);
+const toast=m=>{const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(toast.k);toast.k=setTimeout(()=>t.style.display='none',1800)};
+const G=["Action","Adventure","Comedy","Drama","Fantasy","Horror","Mahou Shoujo","Mecha","Music","Mystery","Psychological","Romance","Sci-Fi","Slice of Life","Sports","Supernatural","Thriller"];
+const SORTS={POPULARITY_DESC:'Popular',TRENDING_DESC:'Trending',SCORE_DESC:'Top rated',START_DATE_DESC:'Newest',TITLE_ROMAJI:'A–Z'};
+const FMT={'':['TV','MOVIE','ONA','TV_SHORT'],TV:['TV','ONA','TV_SHORT'],Movie:['MOVIE']},STAT={Airing:'RELEASING',Completed:'FINISHED'};
+const M={};
+
+/* ---------- AniList data ---------- */
+const FL='id isAdult siteUrl title{romaji english} episodes seasonYear averageScore genres status format popularity bannerImage nextAiringEpisode{episode} coverImage{extraLarge large}';
+const F=FL+' description(asHtml:false)';
+const SQ=`query($page:Int,$now:Int){Page(page:$page,perPage:30){pageInfo{hasNextPage} airingSchedules(airingAt_lesser:$now,sort:TIME_DESC,notYetAired:false){episode airingAt media{${FL}}}}}`;
+let lastErr='';
+async function gql(query,variables){for(let i=0;i<3;i++){try{const r=await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify({query,variables})});if(r.status===429){await sleep(1500*(i+1));continue}const j=await r.json();if(j.errors)lastErr=j.errors.map(x=>x.message).join('; ');if(j.data)return j.data}catch(e){lastErr=String(e.message||e);await sleep(500)}}return null}
+const clean=m=>!m.isAdult&&!/Hentai|Ecchi/.test((m.genres||[]).join());
+function norm(m){const e=M[m.id];if(e){if(!e.full&&m.description!==undefined){e.desc=(m.description||'').replace(/<[^>]*>/g,'');e.full=1}return e}const t=m.title.english||m.title.romaji,c=m.coverImage||{};
+ return M[m.id]={full:m.description!==undefined,id:m.id,t,t2:m.title.romaji,h:hash(t)%360,genres:(m.genres||[]).slice(0,4),year:m.seasonYear||'',type:m.format==='MOVIE'?'Movie':'TV',
+ eps:m.format==='MOVIE'?1:(m.episodes||(m.nextAiringEpisode?Math.max(1,m.nextAiringEpisode.episode-1):12)),status:m.status==='FINISHED'?'Completed':'Airing',
+ score:m.averageScore,desc:(m.description||'').replace(/<[^>]*>/g,''),url:m.siteUrl,covers:[c.large,c.extraLarge].filter(Boolean),banners:m.bannerImage?[m.bannerImage]:[]}}
+async function fetchList(o){const d=['$page:Int','$per:Int'],v={page:o.page||1,per:o.per||30};
+ const args=['type:ANIME','isAdult:false','genre_not_in:["Hentai","Ecchi"]','format_in:['+FMT[o.type||''].join(',')+']','sort:['+(o.q?'SEARCH_MATCH':(SORTS[o.sort]?o.sort:'POPULARITY_DESC'))+']'];
+ if(o.min&&+o.min)args.push('averageScore_greater:'+(+o.min));
+ if(o.q){d.push('$search:String');v.search=o.q;args.push('search:$search')}
+ if(o.genre){d.push('$genre:String');v.genre=o.genre;args.push('genre:$genre')}
+ if(STAT[o.status])args.push('status:'+STAT[o.status]);
+ const data=await gql(`query(${d.join(',')}){Page(page:$page,perPage:$per){pageInfo{hasNextPage} media(${args.join(',')}){${o.full?F:FL}}}}`,v);
+ if(!data)return{items:[],next:false,err:true};return{items:data.Page.media.filter(clean).map(norm),next:data.Page.pageInfo.hasNextPage}}
+async function fetchLatest(page){const d=await gql(SQ,{page,now:Math.floor(Date.now()/1000)});if(!d)return{items:[],next:false,err:true};
+ return{items:d.Page.airingSchedules.filter(s=>s.media&&clean(s.media)&&s.media.popularity>=800).map(s=>({id:s.media.id,a:norm(s.media),ep:s.episode,at:s.airingAt})),next:d.Page.pageInfo.hasNextPage}}
+async function getMany(ids,full){const need=ids.filter(i=>!M[i]||(full&&!M[i].full));if(need.length){const d=await gql(`query($ids:[Int]){Page(perPage:50){media(id_in:$ids,type:ANIME){${F}}}}`,{ids:need});d&&d.Page.media.forEach(norm)}return ids.map(i=>M[i]).filter(Boolean)}
+const getAnime=async id=>(await getMany([id],true))[0];
+
+/* ---------- artwork with fallback sources ---------- */
+const tget=async u=>{try{return await (await fetch('https://api.themoviedb.org/3'+u+(u.includes('?')?'&':'?')+'api_key='+TMDB_KEY)).json()}catch(e){return{}}};
+const normT=x=>String(x||'').toLowerCase().replace(/\b(season|part|cour)\s*\d+\b/g,' ').replace(/\b(the )?animation\b/g,' ').replace(/[^a-z0-9\u3040-\u30ff\u4e00-\u9fff]+/g,' ').trim();
+function titleScore(a,r){const mine=[a.t,a.t2].map(normT).filter(Boolean),theirs=[r.name,r.title,r.original_name,r.original_title].map(normT).filter(Boolean);let best=0;
+ for(const m of mine)for(const t of theirs){let sc=0;if(m===t)sc=10;else if(t.startsWith(m+' ')||m.startsWith(t+' '))sc=6;else{const A=new Set(m.split(' ')),B=new Set(t.split(' '));let n=0;A.forEach(w=>B.has(w)&&n++);sc=6*n/(A.size+B.size-n)}if(sc>best)best=sc}return best}
+function tmdbFind(a){if(!TMDB_KEY)return Promise.resolve(null);return a.tm||(a.tm=(async()=>{
+ const kinds=a.type==='Movie'?['movie','tv']:['tv','movie'],qs=[a.t,a.t2].filter((x,i,l)=>x&&l.indexOf(x)===i);
+ const res=await Promise.all(kinds.flatMap(kind=>qs.map(async q=>((await tget(`/search/${kind}?query=${encodeURIComponent(q)}`)).results||[]).slice(0,8).map(r=>({kind,...r})))));
+ let best=null;
+ for(const r of res.flat()){const ts=titleScore(a,r),anim=(r.genre_ids||[]).includes(16),ja=r.original_language==='ja',yr=+String(r.first_air_date||r.release_date||'').slice(0,4);
+  const sc=ts+(anim?4:0)+(ja?3:0)+(r.kind===kinds[0]?1:0)+(a.year&&yr&&Math.abs(a.year-yr)<=1?1:0);
+  if(!best||sc>best.sc){best={...r,sc,conf:ts>=6&&(anim||ja)}}}
+ return best})())}
+async function fetchArt(a){
+ const q=encodeURIComponent(a.t);
+ await Promise.allSettled([
+  fetch('https://kitsu.io/api/edge/anime?page[limit]=1&filter[text]='+q).then(r=>r.json()).then(j=>{const k=j.data&&j.data[0]&&j.data[0].attributes;if(!k)return;const p=k.posterImage,c=k.coverImage;if(p&&(p.large||p.original))a.covers.push(p.large||p.original);if(c&&(c.large||c.original))a.banners.push(c.large||c.original)}),
+  fetch('https://api.jikan.moe/v4/anime?limit=1&sfw=true&q='+q).then(r=>r.json()).then(j=>{const i=j.data&&j.data[0]&&j.data[0].images&&j.data[0].images.jpg;if(i&&(i.large_image_url||i.image_url))a.covers.push(i.large_image_url||i.image_url)}),
+  tmdbFind(a).then(t=>{if(!t)return;if(t.poster_path)a.covers.push(IMG+'w500'+t.poster_path);if(t.backdrop_path)a.banners.push(IMG+'w1280'+t.backdrop_path)})]);
+ a.covers.forEach(u=>{if(!a.banners.includes(u))a.banners.push(u)});
+}
+const needArt=a=>a.art||(a.art=fetchArt(a));
+async function artErr(el){const a=M[el.dataset.id];if(!a)return;const L=()=>el.dataset.k==='b'?a.banners:a.covers;const i=+el.dataset.i+1;el.dataset.i=i;
+ if(i<L().length){el.src=L()[i];return}await needArt(a);if(i<L().length)el.src=L()[i];else el.remove()}
+function imgTag(a,k,cls){const L=k==='b'?a.banners:a.covers;return `<img class="${cls||'pimg'}" alt="" data-id="${a.id}" data-k="${k}" data-i="${L.length?0:-1}" ${L.length?`src="${esc(L[0])}"`:'data-need="1"'} ${cls==='simg'?'fetchpriority="high" ':'loading="lazy" '}onerror="artErr(this)">`}
+const needObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){needObs.unobserve(e.target);e.target.removeAttribute('data-need');artErr(e.target)}}),{rootMargin:'400px'});
+function post(){document.querySelectorAll('img[data-need]').forEach(el=>{if(!el.__o){el.__o=1;needObs.observe(el)}});paintAdds()}
+const logoImg=a=>`<img src="${a.logo}" alt="${esc(a.t)}" onerror="this.replaceWith(document.createTextNode(this.alt))">`;
+async function logoFor(a){if(a.logoDone)return;a.logoDone=1;const t=await tmdbFind(a);if(!t||!t.conf)return;
+ const im=await tget(`/${t.kind}/${t.id}/images?include_image_language=en,ja,null`);
+ const rank=x=>x.iso_639_1==='en'?0:x.iso_639_1==='ja'?1:2;
+ const l=(im.logos||[]).filter(x=>x.file_path&&!x.file_path.endsWith('.svg')&&x.aspect_ratio>=1).sort((x,y)=>rank(x)-rank(y)||y.vote_average-x.vote_average||y.width-x.width)[0];if(!l)return;
+ a.logo=IMG+'w780'+l.file_path;
+ document.querySelectorAll(`[data-lg="${a.id}"]`).forEach(h=>h.innerHTML=logoImg(a))}
+async function logos(l){if(!TMDB_KEY)return;l=l.filter(a=>a&&!a.logoDone);for(let i=0;i<l.length;i+=6)await Promise.all(l.slice(i,i+6).map(a=>logoFor(a).catch(()=>{})))}
+
+/* ---------- rendering helpers ---------- */
+const grad=a=>`linear-gradient(160deg,hsl(${a.h} 55% 38%),hsl(${(a.h+50)%360} 60% 14%))`;
+const ini=t=>t.replace(/[^A-Za-z0-9 ]/g,'').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?';
+const poster=(a,b)=>`<div class="poster" data-aid="${a.id}" style="background:${grad(a)}">${ini(a.t)}${imgTag(a,'c')}${b?`<span class="badge">${b}</span>`:''}</div>`;
+const card=a=>`<a class="card" href="#/anime/${a.id}" aria-label="${esc(a.t)}">${poster(a,a.type)}</a>`;
+const ago=t=>{const m=Math.max(1,Math.floor((Date.now()/1000-t)/60));return m<60?m+'m ago':m<1440?Math.floor(m/60)+'h ago':Math.floor(m/1440)+'d ago'};
+const row=r=>`<a class="row" href="#/watch/${r.a.id}/${r.ep}"><div class="mini" style="background:${grad(r.a)}">${imgTag(r.a,'c')}</div><div class="grow"><b title="${esc(r.a.t)}">${esc(r.a.t)}</b><span class="muted">Episode ${r.ep} · ${ago(r.at)}</span></div><span class="chip">SUB</span></a>`;
+function paintAdds(){document.querySelectorAll('[data-add]').forEach(b=>{const on=list.includes(+b.dataset.add);b.textContent=b.classList.contains('round')?(on?'✓':'+'):(on?'Remove from list':'Add to list')})}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(!b)return;const id=+b.dataset.add,i=list.indexOf(id);i<0?(list.push(id),toast('Added to list')):(list.splice(i,1),toast('Removed from list'));store.set('list2',list);paintAdds()});
+
+/* ---------- hero carousel: new slide enters from the right ---------- */
+let HERO=[],hi=0,heroT,sliding=false;
+function slideHTML(a){return `<div class="slide">${imgTag(a,'b','simg')}<div class="shade"></div><div class="hbin">
+ <h1 class="htitle" data-lg="${a.id}">${a.logo?logoImg(a):esc(a.t)}</h1>
+ <div class="actions"><a class="btn play" href="#/watch/${a.id}/1">▶ Play</a><button class="round" data-add="${a.id}" aria-label="Add to list">+</button><a class="round" href="#/anime/${a.id}" aria-label="Details">i</a></div></div></div>`}
+function heroGo(){const hb=$('.hb');if(sliding||!hb||HERO.length<2)return;sliding=true;const old=hb.querySelector('.slide');hi=(hi+1)%HERO.length;
+ const w=document.createElement('div');w.innerHTML=slideHTML(HERO[hi]);const ns=w.firstElementChild;ns.style.transform='translateX(100%)';hb.append(ns);ns.getBoundingClientRect();
+ ns.style.transform='translateX(0)';old.style.transform='translateX(-100%)';post();logos([HERO[hi]]);setTimeout(()=>{old.remove();sliding=false},780)}
+async function startHero(items,tok){const hb=$('.hb');if(!hb)return;
+ let c=items.filter(a=>a.banners.length).slice(0,8);const rest=items.filter(a=>!a.banners.length).slice(0,6);
+ if(!c.length){const f=await Promise.any(rest.map(a=>needArt(a).then(()=>{if(!a.banners.length)throw 0;return a}))).catch(()=>null);if(f)c=[f]}
+ if(tok!==rt||!$('.hb'))return;if(!c.length){$('.hb').remove();return}
+ HERO=c;hi=0;hb.classList.remove('skel');hb.innerHTML=slideHTML(HERO[0]);post();logos([HERO[0]]);heroT=setInterval(heroGo,6500);
+ if(c.length<5)rest.forEach(a=>needArt(a).then(()=>{if(tok===rt&&a.banners.length&&!HERO.includes(a)&&HERO.length<8)HERO.push(a)}))}
+
+/* ---------- infinite feed ---------- */
+let rt=0,obs,feed;
+function startFeed(mount,getPage,render){const f=feed={page:0,next:true,busy:false,seen:new Set(),n:0},sent=$('#sent');
+ async function more(){if(f!==feed||f.busy||!f.next)return;f.busy=true;sent.textContent='Loading…';const r=await getPage(f.page+1);if(f!==feed)return;f.busy=false;f.page++;
+  const items=r.items.filter(x=>!f.seen.has(x.id)&&f.seen.add(x.id));f.n+=items.length;mount.insertAdjacentHTML('beforeend',items.map(render).join(''));post();
+  f.next=r.next&&!r.err;sent.textContent=f.next?'':(f.n?'You’ve reached the end.':(r.err?'Could not load titles'+(lastErr?' ('+lastErr+')':'')+'. Check your internet connection and reload.':'Nothing matches. Clear a filter or try another title.'));
+  if(f.next&&sent.getBoundingClientRect().top<innerHeight+600)more()}
+ obs=new IntersectionObserver(e=>{if(e[0].isIntersecting)more()},{rootMargin:'600px'});obs.observe(sent);more()}
+
+/* ---------- pages ---------- */
+const st={sort:'POPULARITY_DESC',type:'',status:'',genre:'',q:'',min:''};
+const chipsG=()=>`<div class="chips">${G.map(g=>`<a class="chip" href="#/genres/${encodeURIComponent(g)}">${g}</a>`).join('')}</div>`;
+const errBox=()=>`<p class="empty">Couldn’t load this section${lastErr?' ('+esc(lastErr)+')':''}. <button class="btn alt" data-retry>Retry</button></p>`;
+document.addEventListener('click',e=>{if(e.target.closest('[data-retry]'))route()});
+function home(tok){
+ app.innerHTML=`<div class="hb skel"></div><div id="cw"></div><h2>Trending now <a class="muted" href="#/browse">See all</a></h2><div class="grid" id="g1"></div><h2>Top rated</h2><div class="grid" id="g3" style="min-height:300px"></div>`;
+ const ok=()=>tok===rt;
+ fetchList({sort:'TRENDING_DESC',per:24,min:65,full:1}).then(tr=>{if(!ok())return;
+  if(!tr.items.length){$('.hb').remove();$('#g1').outerHTML=errBox();loadTop();return}
+  $('#g1').innerHTML=tr.items.slice(0,18).map(card).join('');post();loadTop();startHero(tr.items,tok).catch(()=>{})});
+ let topWatched=0;const loadTop=()=>{if(topWatched||!ok()||!$('#g3'))return;topWatched=1;const io=new IntersectionObserver(es=>{if(!es[0].isIntersecting)return;io.disconnect();if(!ok())return;
+  fetchList({sort:'SCORE_DESC',per:18,min:65}).then(tp=>{if(!ok())return;if(!tp.items.length){$('#g3').outerHTML=errBox();return}$('#g3').innerHTML=tp.items.map(card).join('');$('#g3').style.minHeight='';post()})},{rootMargin:'400px'});io.observe($('#g3'))};
+ if(recent.length)getMany(recent.map(r=>r.id)).then(rs=>{if(!ok())return;
+  $('#cw').innerHTML=`<h2>Continue watching</h2><div class="grid cw">${rs.map(a=>{const r=recent.find(x=>x.id===a.id);return `<a class="card" href="#/watch/${a.id}/${r.ep}" aria-label="${esc(a.t)} episode ${r.ep}"><div class="poster wide" style="background:${grad(a)}">${imgTag(a,'b')}</div><div class="t">Episode ${r.ep}</div></a>`}).join('')}</div>`;post()})}
+function browse(){
+ const sel=(k,o)=>`<select data-k="${k}" aria-label="${k}">${Object.entries(o).map(([v,n])=>`<option value="${v}" ${st[k]===v?'selected':''}>${n}</option>`).join('')}</select>`;
+ app.innerHTML=`<h2 style="margin-top:40px">${st.genre?esc(st.genre):st.q?'Results for “'+esc(st.q)+'”':'Browse anime'}</h2>
+ <div class="filters">${sel('sort',SORTS)}${sel('type',{'':'All types',TV:'TV',Movie:'Movie'})}${sel('status',{'':'Any status',Airing:'Airing',Completed:'Completed'})}${sel('min',{'':'Any score','60':'60%+','70':'70%+','80':'80%+'})}${sel('genre',{'':'All genres',...Object.fromEntries(G.map(g=>[g,g]))})}</div>
+ <div class="grid" id="bg"></div><div class="sent" id="sent"></div>`;
+ app.querySelectorAll('select').forEach(s=>s.onchange=()=>{st[s.dataset.k]=s.value;if(obs)obs.disconnect();feed=null;browse()});
+ startFeed($('#bg'),p=>fetchList({...st,page:p}),card)}
+function latestPage(){app.innerHTML=`<h2 style="margin-top:40px">Latest episodes <small>newest first</small></h2><div class="rows" id="bg"></div><div class="sent" id="sent"></div>`;startFeed($('#bg'),fetchLatest,row)}
+async function listPage(tok){app.innerHTML='<h2 style="margin-top:40px">My list</h2><p class="empty">Loading…</p>';const l=await getMany(list);if(tok!==rt)return;
+ app.innerHTML=`<h2 style="margin-top:40px">My list <small>${l.length} saved</small></h2>${l.length?`<div class="grid">${l.map(card).join('')}</div>`:'<p class="empty">Your list is empty. Open an anime and choose Add to list.</p>'}`;post()}
+/* ---------- Studio Ghibli API (ghibliapi.dev) ---------- */
+let GH=null;
+async function ghibli(){if(GH)return GH;try{const r=await fetch('https://ghibliapi.dev/films?limit=50');const j=await r.json();if(!Array.isArray(j))throw new Error('bad response');GH=j.map(f=>({...f,h:hash(f.title)%360}))}catch(e){lastErr=String(e.message||e);return[]}return GH}
+const ghCard=f=>`<a class="card" href="#/ghibli/${f.id}"><div class="poster" style="background:${grad(f)}">${ini(f.title)}<img class="pimg" src="${esc(f.image)}" alt="" loading="lazy" onerror="this.remove()"><span class="badge">${esc(f.release_date)}</span></div><div class="t">${esc(f.title)}</div></a>`;
+async function ghibliPage(tok){app.innerHTML='<h2 style="margin-top:40px">Studio Ghibli <small>from ghibliapi.dev</small></h2><div class="grid" id="gg"></div>';const l=await ghibli();if(tok!==rt)return;$('#gg').outerHTML=l.length?`<div class="grid">${l.map(ghCard).join('')}</div>`:errBox()}
+async function ghibliDetail(id,tok){app.innerHTML='<p class="empty" style="padding-top:60px">Loading…</p>';const f=(await ghibli()).find(x=>x.id===id);if(tok!==rt)return;if(!f)return nf();document.title=f.title+' — ani.pm';
+ app.innerHTML=`<div class="gb"><img src="${esc(f.movie_banner)}" alt="" onerror="this.remove()"></div><div class="detail"><div class="poster" style="background:${grad(f)}">${ini(f.title)}<img class="pimg" src="${esc(f.image)}" alt="" onerror="this.remove()"></div><div><h1>${esc(f.title)}</h1>
+ <p class="muted">${esc(f.original_title)} · ${esc(f.original_title_romanised)}</p>
+ <div class="meta"><span class="chip">${esc(f.release_date)}</span><span class="chip">${esc(f.running_time)} min</span><span class="chip">${esc(f.rt_score)}% Rotten Tomatoes</span><span class="chip">Movie</span></div>
+ <p class="muted" style="max-width:62ch;font-size:16px">${esc(f.description)}</p><p class="muted">Director: ${esc(f.director)} · Producer: ${esc(f.producer)}</p></div></div>`}
+
+/* ---------- Scene search (trace.moe) ---------- */
+function scenePage(){app.innerHTML=`<h2 style="margin-top:40px">Find anime by screenshot</h2><p class="muted" style="max-width:60ch">Upload a screenshot from an episode or movie. trace.moe finds the anime, the episode and the timestamp.</p>
+ <div class="drop" id="drop"><input type="file" id="sfile" accept="image/*" hidden><button class="btn" id="spick">Choose image</button><span class="muted">or drop one here, or paste an image link:</span>
+ <div class="search2"><input id="surl" type="url" placeholder="https://example.com/screenshot.jpg" aria-label="Image link"><button class="btn alt" id="sgo">Search</button></div></div><div id="sres"></div>`;
+ const d=$('#drop'),fi=$('#sfile');$('#spick').onclick=()=>fi.click();fi.onchange=()=>fi.files[0]&&sceneSearch(fi.files[0]);
+ $('#sgo').onclick=()=>{const u=$('#surl').value.trim();if(u)sceneSearch(null,u)};
+ d.ondragover=e=>{e.preventDefault();d.classList.add('over')};d.ondragleave=()=>d.classList.remove('over');
+ d.ondrop=e=>{e.preventDefault();d.classList.remove('over');const f=e.dataTransfer.files[0];if(f)sceneSearch(f)}}
+async function sceneSearch(file,url){const box=$('#sres');box.innerHTML='<p class="empty">Searching…</p>';
+ try{let r;if(file){const fd=new FormData();fd.append('image',file);r=await fetch('https://api.trace.moe/search?anilistInfo&cutBorders',{method:'POST',body:fd})}
+  else r=await fetch('https://api.trace.moe/search?anilistInfo&cutBorders&url='+encodeURIComponent(url));
+  const j=await r.json();if(j.error)throw new Error(j.error);
+  const res=(j.result||[]).filter(x=>x.anilist&&!x.anilist.isAdult).slice(0,5);
+  box.innerHTML=res.length?res.map(x=>{const a=x.anilist,t=(a.title&&(a.title.english||a.title.romaji))||'Unknown',m=Math.floor(x.from/60),sc=Math.floor(x.from%60);
+   return `<a class="sr" href="#/anime/${a.id}"><video src="${esc(x.video)}" muted loop autoplay playsinline></video><div><b>${esc(t)}</b><div class="muted">Episode ${x.episode||'?'} · ${m}:${String(sc).padStart(2,'0')} · ${(x.similarity*100).toFixed(1)}% match${x.similarity<0.9?' (low confidence)':''}</div></div></a>`}).join(''):'<p class="empty">No match found. Try a clearer screenshot without borders or subtitles.</p>'}
+ catch(e){box.innerHTML=`<p class="empty">Couldn’t search (${esc(e.message||e)}). Wait a moment and try again.</p>`}}
+
+/* ---------- Extras: public APIs wrapped by the anime-api project (called straight from the browser) ---------- */
+const XCAT={'nekos.best':['neko','waifu','kitsune','husbando'],'waifu.pics':['waifu','neko','shinobu','megumin','cuddle','pat','smile','happy']};
+async function xjson(u){const r=await fetch(u);if(!r.ok)throw new Error('HTTP '+r.status);return r.json()}
+async function xImages(src,cat,n){
+ if(src==='nekos.best'){const j=await xjson('https://nekos.best/api/v2/'+cat+'?amount='+n);return j.results.map(x=>({url:x.url,cap:x.artist_name||'',link:x.source_url||x.url}))}
+ const j=await xjson('https://api.waifu.pics/sfw/'+cat);return[{url:j.url,cap:'waifu.pics',link:j.url}]}
+function extrasPage(){
+ app.innerHTML=`<h2 style="margin-top:40px">Extras <small>live from public anime APIs</small></h2>
+ <h2>Random art</h2><div class="filters"><select id="xs">${Object.keys(XCAT).map(k=>`<option>${k}</option>`).join('')}</select><select id="xc"></select><button class="btn" id="xgo">Load more</button></div><div class="xg" id="xart"></div><div class="sent" id="xmsg"></div>
+ <h2>Anime quotes</h2><div class="filters search2" style="display:flex"><input id="xq" placeholder="Anime title (leave empty for random)" aria-label="Quote anime title"><button class="btn" id="qgo">Get quotes</button></div><div id="xquotes"></div>`;
+ const xs=$('#xs'),xc=$('#xc');
+ const cats=()=>{xc.innerHTML=XCAT[xs.value].map(c=>`<option>${c}</option>`).join('')};cats();
+ const load=async(clear)=>{const m=$('#xmsg');m.textContent='Loading…';try{
+   const n=xs.value==='waifu.pics'?6:8;let items=[];
+   if(xs.value==='waifu.pics'){items=(await Promise.all(Array.from({length:n},()=>xImages('waifu.pics',xc.value,1)))).flat()}else items=await xImages(xs.value,xc.value,n);
+   if(clear)$('#xart').innerHTML='';
+   $('#xart').insertAdjacentHTML('beforeend',items.map(i=>`<a href="${esc(i.link)}" target="_blank" rel="noopener"><img src="${esc(i.url)}" alt="" loading="lazy"><small>${esc(i.cap)}</small></a>`).join(''));m.textContent=''}
+  catch(e){m.textContent='Could not load ('+(e.message||e)+'). The service may be down or rate-limiting you; try again in a moment.'}};
+ xs.onchange=()=>{cats();load(true)};xc.onchange=()=>load(true);$('#xgo').onclick=()=>load(false);load(true);
+ const quotes=async()=>{const box=$('#xquotes'),t=$('#xq').value.trim();box.innerHTML='<p class="empty">Loading…</p>';
+  try{const j=await xjson('https://animechan.xyz/api/'+(t?'quotes/anime?title='+encodeURIComponent(t):'quotes'));const l=Array.isArray(j)?j:[j];
+   box.innerHTML=l.length?l.map(q=>`<div class="qt">“${esc(q.quote)}”<b>${esc(q.character)} · ${esc(q.anime)}</b></div>`).join(''):'<p class="empty">No quotes found.</p>'}
+  catch(e){box.innerHTML=`<p class="empty">Could not load quotes (${esc(e.message||e)}). The Animechan service limits free requests; try again later.</p>`}};
+ $('#qgo').onclick=quotes;$('#xq').onkeydown=e=>{if(e.key==='Enter')quotes()};quotes()}
+const nf=()=>{app.innerHTML=`<p class="empty" style="padding-top:60px">That page doesn’t exist. <a href="#/" style="color:var(--accent)">Go home</a></p>`};
+const epGrid=(a,cur)=>`<div class="eps">${Array.from({length:Math.min(a.eps,120)},(_,i)=>`<a class="${i+1===cur?'on':''}" href="#/watch/${a.id}/${i+1}">${i+1}</a>`).join('')}</div>${a.eps>120?'<p class="muted" style="margin-top:10px">Showing the first 120 episodes.</p>':''}`;
+async function detail(id,tok){app.innerHTML='<p class="empty" style="padding-top:60px">Loading…</p>';const a=await getAnime(id);if(tok!==rt)return;if(!a)return nf();document.title=a.t+' — ani.pm';
+ app.innerHTML=`<div class="detail">${poster(a)}<div><h1 data-lg="${a.id}">${a.logo?logoImg(a):esc(a.t)}</h1>
+ <div class="meta">${[a.type,a.year,a.status,a.eps+' episodes',a.score?a.score+'% score':''].filter(Boolean).map(m=>`<span class="chip">${m}</span>`).join('')}${a.genres.map(g=>`<a class="chip" href="#/genres/${encodeURIComponent(g)}">${esc(g)}</a>`).join('')}</div>
+ <p class="muted" style="max-width:62ch;font-size:16px">${esc(a.desc)||'No description available.'}</p>
+ <div class="actions"><a class="btn" href="#/watch/${a.id}/1">Watch episode 1</a><a class="btn alt" target="_blank" rel="noopener" href="${a.url}">Where to watch</a><button class="btn alt" data-add="${a.id}">Add to list</button></div></div></div><h2>Episodes</h2>${epGrid(a)}`;post();logos([a])}
+async function watch(id,ep,tok){const a=await getAnime(id);if(tok!==rt)return;ep=+ep||1;if(!a||ep<1||ep>a.eps)return nf();
+ recent=recent.filter(r=>r.id!==a.id);recent.unshift({id:a.id,ep});recent=recent.slice(0,12);store.set('recent2',recent);document.title=a.t+' · Ep '+ep;
+ app.innerHTML=`<p style="margin-top:28px"><a class="muted" href="#/anime/${a.id}">← ${esc(a.t)}</a></p><h2 style="margin:8px 0 0">Episode ${ep}</h2>
+ <div class="player" id="pl"><button class="btn play" id="plBtn" style="position:absolute;inset:0;margin:auto;width:max-content;height:max-content">▶ Play episode ${ep}</button></div>
+ <div class="pnav"><a class="btn alt" href="#/watch/${a.id}/${Math.max(1,ep-1)}">Previous</a><a class="btn" href="#/watch/${a.id}/${Math.min(a.eps,ep+1)}">Next</a><a class="btn alt" target="_blank" rel="noopener" href="${a.url}">Where to watch</a></div>
+ <h2>Episodes</h2>${epGrid(a,ep)}`;
+ $('#plBtn').onclick=()=>{$('#pl').innerHTML=`<iframe src="https://vidly.pro/anime/${a.id}/${ep}" allowfullscreen></iframe>`}}
+
+/* ---------- Search page ---------- */
+const sq={q:''};
+function searchPage(q){sq.q=q;
+ app.innerHTML=`<h2 style="margin-top:40px">Search</h2>
+ <form class="search2" id="sp" style="max-width:640px;flex:none"><input id="sqi" type="search" placeholder="Type a title…" value="${esc(q)}" aria-label="Search" autocomplete="off"><button class="btn">Search</button></form>
+ <div class="grid" id="bg" style="margin-top:24px"></div><div class="sent" id="sent">${q?'':'Type a title to search.'}</div>`;
+ $('#sp').onsubmit=e=>{e.preventDefault();const v=$('#sqi').value.trim(),h='#/search/'+encodeURIComponent(v);if(location.hash===h)route();else location.hash=h};
+ if(!q){$('#sqi').focus();return}
+ startFeed($('#bg'),pg=>fetchList({q,page:pg}),card)}
+
+function route(){
+ const tok=++rt;clearInterval(heroT);sliding=false;feed=null;if(obs)obs.disconnect();$('#side').classList.remove('open');
+ const [r,a,b]=(location.hash.replace(/^#\/?/,'')||'home').split('/'),name=r||'home';
+ document.title='ani.pm — watch anime free, subbed & dubbed, in HD';scrollTo(0,0);
+ document.querySelectorAll('nav.main a').forEach(x=>x.classList.toggle('on',x.dataset.r===name));
+ if(name==='home')home(tok);
+ else if(name==='browse'){st.genre='';st.q='';browse()}
+ else if(name==='genres'){if(a){st.genre=decodeURIComponent(a);st.q='';browse()}else app.innerHTML=`<h2 style="margin-top:40px">Genres</h2>${chipsG()}`}
+ else if(name==='search')searchPage(decodeURIComponent(a||''))
+ else if(name==='latest')latestPage();
+ else if(name==='ghibli'){a?ghibliDetail(a,tok):ghibliPage(tok)}
+ else if(name==='scene')scenePage();
+ else if(name==='extras')extrasPage();
+ else if(name==='list')listPage(tok);
+ else if(name==='anime')detail(+a,tok);
+ else if(name==='watch')watch(+a,b,tok);
+ else nf();
+}
+$('#burger').onclick=()=>$('#side').classList.toggle('open');
+addEventListener('keydown',e=>{if(e.ctrlKey&&e.key.toLowerCase()==='k'){e.preventDefault();if(location.hash.startsWith('#/search'))$('#sqi')&&$('#sqi').focus();else location.hash='#/search'}});
+addEventListener('hashchange',route);route();
+</script>
+<script>
+/* ADSM cursor bridge: hides this page's own cursor and reports the mouse to the parent page (index.html),
+   which draws the custom cursor on top. Safe to leave in when the page is opened on its own. */
+(function () {
+  if (window.parent === window) return;
+  var CSS = '*,*::before,*::after{cursor:none !important}';
+  function addStyle(d) { try { if (d.__adsmStyle) return; d.__adsmStyle = 1; var s = d.createElement('style'); s.textContent = CSS; (d.head || d.documentElement).appendChild(s); } catch (e) {} }
+  function kind(t) {
+    if (!t || !t.closest) return 'arrow';
+    if (t.closest('button:disabled,[disabled]')) return 'no';
+    if (t.closest('input:not([type=button]):not([type=checkbox]):not([type=range]):not([type=radio]):not([type=submit]),textarea,[contenteditable=""],[contenteditable="true"]')) return 'text';
+    if (t.closest('a[href],button,select,summary,label,[role="button"],[onclick],.zone-item,[class*="cursor-pointer"]')) return 'hand';
+    return 'arrow';
+  }
+  function send(x, y, k) { window.parent.postMessage({ type: 'fruiti-cursor', x: x, y: y, kind: k }, '*'); }
+  function hide() { window.parent.postMessage({ type: 'fruiti-cursor', hide: true }, '*'); }
+  var acked = false, docs = [];
+  window.addEventListener('message', function (e) {
+    if (e.data && e.data.type === 'fruiti-cursor-ack' && !acked) { acked = true; docs.forEach(addStyle); }
+  });
+  function hook(d, ox) {
+    docs.push(d); if (acked) addStyle(d); // own cursor is hidden only once index.html confirms it is drawing the custom one
+    d.addEventListener('mousemove', function (e) {
+      var r = ox ? ox() : { left: 0, top: 0 };
+      send(r.left + e.clientX, r.top + e.clientY, kind(e.target));
+    }, true);
+    d.addEventListener('mouseleave', hide);
+  }
+  hook(document);
+  // Same-origin child frames (e.g. the game viewer) are followed too
+  function hookChild(f) {
+    var seen = null;
+    setInterval(function () {
+      var d = null;
+      try { d = f.contentDocument; void d.body; } catch (e) { d = null; }
+      if (!d || !d.documentElement || d === seen) return;
+      seen = d;
+      hook(d, function () { return f.getBoundingClientRect(); });
+    }, 500);
+  }
+  var done = new WeakSet();
+  function scan() { document.querySelectorAll('iframe').forEach(function (f) { if (!done.has(f)) { done.add(f); hookChild(f); } }); }
+  scan(); setInterval(scan, 700);
+})();
+</script>
+</body>
+</html>

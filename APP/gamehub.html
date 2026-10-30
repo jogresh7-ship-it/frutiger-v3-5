@@ -37,17 +37,17 @@
         :root {
             --primary: #ffffff;
             --text: #ffffff;
-            --bg: transparent;
-            --card-bg: rgba(22, 22, 26, 0.8);
+            --bg: #000000;
+            --card-bg: #0d0d11;
             --border: #26262e;
-            --radius: 14px;
-            --radius-sm: 8px;
-            --radius-lg: 20px;
+            --radius: 8px;
+            --radius-sm: 6px;
+            --radius-lg: 10px;
         }
 
         .dark-mode {
             --text: #f1f5f9;
-            --bg: transparent;
+            --bg: #000000;
             --border: #222222;
         }
 
@@ -59,14 +59,16 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            background: transparent;
+            background: #000000;
             color: var(--text);
             transition: all 0.3s ease;
             -webkit-font-smoothing: antialiased;
         }
 
+        html { background: #000000; }
+
         header {
-            background: transparent;
+            background: #000000;
             color: white;
             position: relative;
             z-index: 100;
@@ -77,10 +79,12 @@
             width: 100%;
             max-width: 100%;
             margin: 0 auto;
-            padding: 1rem 1.5rem;
+            padding: 1rem 1.5rem 0.5rem 1.5rem;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 0.9rem;
         }
 
         .search-container {
@@ -95,8 +99,8 @@
             width: 100%;
             padding: 1rem 1.5rem;
             border: 2px solid #3a3a42;
-            border-radius: var(--radius);
-            background: rgba(20, 20, 24, 0.85);
+            border-radius: 8px;
+            background: #0d0d11;
             color: #ffffff;
             font-family: 'GNFFont', sans-serif !important;
             font-size: 16px;
@@ -109,13 +113,51 @@
 
         #searchBar:focus {
             border-color: #ffffff;
-            background: rgba(30, 30, 36, 0.95);
+            background: #14141a;
             box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
         }
 
         #searchBar::placeholder {
             color: #71717a;
             font-family: 'GNFFont', sans-serif !important;
+        }
+
+        /* Provider picker */
+        #providerBar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .provider-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid #3a3a42;
+            border-radius: 6px;
+            background: #0d0d11;
+            color: #cfcfd6;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .provider-btn:hover {
+            border-color: #888;
+            color: #fff;
+        }
+
+        .provider-btn.active {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: #000000;
+        }
+
+        .provider-btn .count {
+            opacity: 0.6;
+            font-size: 12px;
+            margin-left: 4px;
         }
 
         main {
@@ -126,99 +168,146 @@
 
         #container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-            gap: 1.25rem 1rem;
-            justify-items: center;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            grid-auto-rows: 330px;
+            grid-auto-flow: row dense;
+            gap: 2rem;
+            padding: 10px 0;
         }
 
+        #container > .status-msg {
+            grid-column: 1 / -1;
+            grid-row: auto;
+            color: #8e8e93;
+        }
+
+        /* Game card: art on top, name + GET row underneath. Every card in a row is the same height.
+           No overflow clipping here: the art and the info bar each carry their own rounded corners,
+           and the outline is a box-shadow ring, so every corner is drawn smoothly. */
         .zone-item {
             background: transparent;
             border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 0 1px #25252f;
             cursor: pointer;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 8px;
             padding: 0;
             width: 100%;
+            min-width: 0;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* Noah Games are wide rectangles; Fruit and gn-math stay single-column cards */
+        .zone-item.wide { grid-column: span 2; }
+
+        .zone-item:hover,
+        .zone-item:focus-visible {
+            transform: translateY(-6px);
+            box-shadow: 0 0 0 1px #3c5fd0, 0 16px 44px rgba(47, 107, 255, 0.19);
+            outline: none;
         }
 
         .zone-box-wrap {
             position: relative;
+            flex: 1;
+            min-height: 0;
             width: 100%;
         }
 
         .zone-box {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            border-radius: var(--radius-lg);
+            position: absolute;
+            inset: 0;
+            background-color: #1a1a24;
             background-size: cover;
             background-position: center;
-            border: 1px solid #26262a;
-            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 10px 10px 0 0;
         }
 
-        .zone-item:hover .zone-box {
-            transform: translateY(-4px);
-            border-color: #666;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+        .zone-box.fb {
+            display: grid;
+            place-items: center;
+            font-weight: 900;
+            font-size: 3.4rem;
+            color: rgba(255, 255, 255, 0.85);
         }
 
-        /* Install button shown on each game card */
-        .install-btn {
+        .zone-info {
+            background: #0d0d11;
+            border-radius: 0 0 10px 10px;
+            padding: 14px 20px 18px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 8px 10px;
+            align-items: center;
+        }
+
+        .zone-info .zone-name {
+            grid-column: 1 / -1;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1rem;
+            line-height: 1.2;
+            text-align: left;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .zone-kind { color: #8b8b99; font-size: 0.85rem; }
+
+        /* Small provider label, shown on cards when viewing "All" */
+        .provider-tag {
             position: absolute;
-            right: 8px;
-            bottom: 8px;
-            padding: 5px 10px;
-            border: 1px solid #555;
-            border-radius: 999px;
-            background: rgba(10, 10, 10, 0.85);
-            color: #fff;
-            font-size: 11px;
+            left: 10px;
+            top: 10px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: #0a0a0a;
+            border: 1px solid #444;
+            color: #ddd;
+            font-size: 10px;
+            pointer-events: none;
+        }
+
+        .install-btn {
+            background: #1b2236;
+            color: #2f6bff;
+            border: 0;
+            border-radius: 6px;
+            padding: 8px 18px;
+            font-weight: 700;
+            font-size: 0.8rem;
             cursor: pointer;
-            opacity: 0;
-            transform: translateY(4px);
-            transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease, color 0.2s ease;
-            backdrop-filter: blur(6px);
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
         .zone-item:hover .install-btn,
-        .install-btn:focus,
-        .install-btn.done,
-        .install-btn.busy {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .install-btn:hover { background: #fff; color: #000; }
-        .install-btn.done { background: #fff; color: #000; }
+        .zone-item:focus-visible .install-btn,
+        .install-btn:hover,
+        .install-btn:focus-visible { background: #2f6bff; color: #fff; }
+        .install-btn.done { background: #1f9d57; color: #fff; }
         .install-btn:disabled { cursor: default; }
 
-        .zone-item .zone-name {
-            color: #ffffff;
-            font-weight: 600;
-            font-size: 0.85rem;
-            line-height: 1.2;
-            text-align: center;
-            margin: 0;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+        @media (max-width: 700px) {
+            #container { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 270px; gap: 1rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .zone-item { transition: none; }
         }
 
         #zoneViewer {
             position: fixed;
             inset: 0;
-            background: transparent;
+            background: #000000;
             z-index: 1000;
             display: none;
             flex-direction: column;
         }
 
         .zone-header {
-            background: rgba(17, 17, 17, 0.9);
-            backdrop-filter: blur(8px);
+            background: #111111;
             color: white;
             padding: 0.75rem 1.5rem;
             display: flex;
@@ -254,7 +343,7 @@
             border: none;
             color: white;
             padding: 0.5rem 0.8rem;
-            border-radius: var(--radius-sm);
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
             font-weight: 500;
@@ -270,7 +359,7 @@
             border: none;
             width: 100%;
             height: 100%;
-            background: transparent;
+            background: #000000;
         }
 
         body.app-fullscreen-mode header,
@@ -305,11 +394,12 @@
             <div class="search-container">
                 <input type="text" id="searchBar" placeholder="Search games by name..." oninput="filterZones()">
             </div>
+            <div id="providerBar"></div>
         </div>
     </header>
 
     <main>
-        <div id="container">Loading...</div>
+        <div id="container"><div class="status-msg">Loading...</div></div>
     </main>
 
     <!-- Game Viewer with Install, Fullscreen, New Tab, and Close buttons -->
@@ -331,17 +421,167 @@
     </div>
 
     <script>
+    /* Noah's games, inlined so no separate noahgames.js file is needed.
+       Rows are [title, url, image]. Short forms expand into the full links below. */
+    const NOAH_GAMES = (function () {
+        var J = 'https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/games/';
+        var I = 'https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/';
+        var G = {
+            a: 'https://script.google.com/macros/s/AKfycbx137PRDh0Of0SDaXqu2fKaJ8Ht8Os5Nabi3xeIWYs_dCA0jP4SKRjQ9P9nC1xeruWK/exec?game=',
+            b: 'https://script.google.com/macros/s/AKfycby_6uwHt90FuvgGfTLTHhveJVw0nEJ_bMxq8GTaA1KjFfpmu0g08RlArFt61GAw7WOw/exec?game=',
+            c: 'https://script.google.com/macros/s/AKfycbxbf7DaEtTxZVBBPow6r-L0q2mvgkI4D7xYUU-_sbldBlrXfiB4jK1f4ACNiR0LPuCt/exec?game=',
+            d: 'https://script.google.com/macros/s/AKfycbw2YH3dPJE1XWPOXBnR4UOidr3vX8fgY0ZIyWj1Bmx9Lcty0e1bfUOYwPJ02lviN2Hb/exec?game=',
+            e: 'https://script.google.com/macros/s/AKfycbzyj-ClxB2ouG-p6WKb1f3vRqmapP4DA9kn9ZHPRYQ1d9_Ynk4nMOjyLpceGUfaTKFB/exec?game='
+        };
+        var HTML = { c: 1, d: 1, e: 1 };
+        var R = [
+["Alien Hominid","J393","382p"],["Customer Support","J383","383"],["The Deadseat","J395","384"],["Fireboy & Watergirl: Forest Temple","J385","385"],
+["Deltatraveler","a388","386"],["Needy Streamer Overload","a389","387"],["Pizza Tower","J394","388p"],["TileTopia","J391","389p"],
+["Earn to Die","J378","378"],["Earn to Die 2","J379","379"],["Bart Blast","J380","380"],["Bendy and the Ink Machine","b374","374"],
+["Gacha Life","J375","375"],["Gacha Verse","J376","376"],["Tung Sahur Horror","b377","377"],["Horror Tale","J373","373"],
+["Dumb Ways to Die","J372","https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/images/372.jpg"],
+["Bloons Tower Defense 1","J367","367"],["Bloons Tower Defense 2","J368","368"],["Bloons Tower Defense 3","J369","369"],["Bloons Tower Defense 4","J370","370"],["Bloons Tower Defense 5","J371","371"],
+["Brotato","J366","366"],["Endoparasitic 2","J365","365"],["Endoparasitic","J364","364"],["Baby Sniper In Vietnam","J363","363"],
+["Shift at Midnight","c362","356"],["Road of Fury","J361","355"],["Roulette Hero","c360","354"],["Fear Assessment","J359","353p"],
+["Dimension Incident","J358","352"],["Raldi's Crackhouse","c357","360"],["Christmas Massacre","J356","359"],["Boxing Random","J355","358"],
+["Volley Random","J354","357"],["Basket Random","J353","362p"],["Soccer Random","J352","361"],
+["Little Big Planet","J351","https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor@master/images/351.jpg"],
+["Binding of Isaac: Rebirth","J350","350"],["Littlest Pet Shop City Friends","J348","349"],["Cloverpit","d342","343"],["Peaks of Yore","J343","344"],
+["Silent Hill","J344","345"],["Dad 'n Me","J345","346"],["Five Nights at Candy's","J346","347"],["Five Nights at Candy's 2","J347","348"],
+["Untitled Goose Game","e341","342"],["Deltarune Ch. 3 & 4","J340","341"],["Earthbound","J339","340"],["Hamtaro: Ham-Ham Heartbreak","J336","337"],
+["Class of '09","d337","338"],["Antonblast","J338","339"],
+["Super Monkey Ball","https://rawcdn.githack.com/slqntdevss/quasar/main/public/assets/storage/html/smb/index.html","336"],
+["Iron Lung","d306","328"],["Superhot","J299","321"],["OMORI","d290","312"],["Fear & Hunger","d305","327"],["Doodle Jump","d298","320"],
+["Karlson","J289","311"],["Toss The Turtle","J311","334"],["Survivor.io","d310","333"],["People Playground","d309","332"],["Papers, Please","d308","331"],
+["Scrap Divers","https://rawcdn.githack.com/gameinclassroom/scrap-divers/a856e0b0dfafba00718e3b8dd05976376bf2b71b/index.html","330"],
+["Beeswarm Simulator","J312","335"],["Time Shooter 3: SWAT","J303","325"],["Time Shooter 2","J302","324"],["Time Shooter 1","J301","323"],
+["The Man From The Window","J293","315"],["Real Flight Simulator","J294","316"],["Johnny Trigger","J288","310"],["Kirby Soft & Wet","J292","314"],
+["VS Rewrite: ROUND 2","J304","326"],
+["Speed Stars","https://rawcdn.githack.com/BeezBumba/SpeedStarsv2/67d3a926357cf35e2a2efc5ac5fc29c786c8cbda/index.html","317"],
+["Stickman Destruction","J296","318"],["Stickman Fight Ragdoll","J297","319"],["Gobble","J291","313"],["Tag","J300","322p"],["BitPlanes","J307","329"],
+["Half Life: Opposing Force","J269","296"],["A Difficult Game About Climbing","d172","294"],["Stick War Legacy","d171","293"],["Buster Jam","J170","292"],
+["Dungeons & Degenerate Gamblers","J173","295"],["Minecraft 1.12.1","J164","291"],["Gorilla Tag","d161","289"],["Goblin Goopmaxxing","J160","288"],
+["Midnight Shift","J159","287"],["Orange Roulette","J158","286"],["Five Nights at Winstons","J157","285"],["Final Fantasy VII","J156","284"],
+["Please Dont Touch Anything","J155","283"],["Minesweeper Classic","J162","290"],["Doom 3","https://doom3kaidensarcade.netlify.app/","282"],
+["Slendy Tubbies","J273","281"],["Pixel Gun 3D","J272","280"],["Flying Gorilla","J271","279"],["Eat The Rich","J270","278"],
+["Grand Theft Auto Vice City","J149","272"],["Heretic","J150","273"],["Bacon May Die","J151","274"],["Oneshot","J152","275"],["Jelly Drift","J153","276"],
+["FNF Rewrite","J154","277"],["Terraria","J165","271"],["Celeste","J147","270"],["Burrito Bison","J267","130"],["Tanuki Sunset","J146","269"],
+["SwordFight!!","d145","268"],["Station Saturn","d144","267"],["Spelunky Classic HD","J143","266"],["Sonic.EXE","J142","265"],["Minesweeper Plus","J141","264"],
+["Kitty Toy","J140","263"],["Happy Wheels","J139","174"],["Google Feud","J138","262"],["Basketball Stars","J137","261"],["Daggerfall","J136","252"],
+["Portal","J135","253"],["Ice Dodo","J134","254"],["Doom","J133","255"],["Doom 2","J257","257"],["Call of Duty: World at War","J130","258"],
+["Call of Duty 4: Modern Warfare","J129","259"],["Kart Bros","https://kartbros.io/","260"],["Peggle","d127","251"],["Ace Attorney","J126","250"],
+["FNF Agoti","J125","249"],["FNF Black Betrayal","J124","248"],["FNF B-Side","J123","247"],["FNF Camellia","J122","246"],["FNF Impostor V4","J121","245"],
+["FNF Indie Cross","J120","244"],["FNF Kapi","J119","243"],["FNF Mario Madness","J118","242"],["FNF Pibby Apocalypse","J117","241"],
+["FNF Shaggy X Matt","J116","240"],["FNF Sonic.exe","J115","239"],["FNF Garcello","J114","238"],["FNF Hit Single","J113","237"],
+["Papa's Donuteria","J275","297"],["Papa's Burgeria","J276","298"],["Papa's Cheeseria","J277","299p"],["Papa's Cupcakeria","J278","300"],
+["Papa's Freezeria","J279","301"],["Papa's Hot Doggeria","J280","302"],["Papa's Pancakeria","J281","303"],["Papa's Pastaria","J282","304"],
+["Papa's Scooperia","J283","305"],["Papa's Sushiria","J284","306"],["Papa's Taco Mia","J285","307"],["Papa's Wingeria","J286","308p"],["Papa's Pizzeria","J287","309"],
+["Achilles 2","d112","236"],["Russian Counter Strike","d111","235"],["Deltarune","J110","234"],["Learn to Fly 3","J109","233"],["Lego Batman 2","J108","232"],
+["Lego Star Wars Complete Saga","J107","231"],["Madness Interactive","J106","230"],["Tony Hawks Pro Skater","J105","229"],["Postal","J104","228"],
+["Resident Evil 3","J103","227"],["Scribblenauts","J102","226"],["Sprunki","J101","225"],["Strange Rope Police","J100","224"],["Street Fighter III","J99","223"],
+["Super Liquid Soccer","J98","222"],["Tempoverdose","J97","221"],["Abandoned","J96","220"],["Plants vs Zombies 2","J92","197"],["Hotline Miami","J16","22"],
+["Balatro","J268","195"],["Wolfenstein 3D","J95","219"],["Zombotron Reboot","J94","218"],
+["Mortal Kombat 4","J93","https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/images/fuckthis.jpg"],
+["Undertale","J91","217"],["Zelda: Majora's Mask","J90","216"],["Cooking Mama 3","J89","215"],["Cooking Mama 2","J88","214"],["Cooking Mama","J87","213"],
+["BloodMoney","J86","212"],["Big Shot Boxing","J85","211"],["Assessment Examination","J84","210"],["Schoolboy Runaway","d83","209"],
+["Fears to Fathom: Home Alone","J82","208"],["Dan The Man","J81","207"],["Resident Evil 2","J80","205"],
+["Get Yoked","https://rawcdn.githack.com/ahrdevelopers/get-yoked-extreme-bodybuilding/5584024f6f0dc9fed26b21529b7578057d306fd5/index.html","204"],
+["Douche Bag Life","d78","203"],["Donkey Kong","J77","202"],["Apple Worm","J75","201"],["Chess","J74","200"],["Doki Doki Literature Club","J73","199"],
+["Getting Over It","d72","198"],
+["Toca Boca World","https://ud-gles3games.shared-osj.k8s.n2i.io/?deeplinksURI=null%3A%2F%2F&deeplinksApp=com.tocaboca.tocalifeworld&quotaBytes=89000000&naturalOrientation=portrait&invertNaturalOrientation&forcedNaturalOrientation&jitterBufferMin=0&deeplinksService=true&backOnDisconnected=true&disconnectedMessage=null&api=%7B%22back%22%3Afalse%7D&title=Toca+Boca+World","206"],
+["Tattletail","J71","196"],["Sonic the Hedgehog 3","J69","189"],["Sonic the Hedgehog 2","J68","190"],["Sonic Mania","J67","191"],["Sonic CD","J66","192"],
+["War The Knights","d70","193"],["Football Bros","https://fb.crispyclean.org/","194"],["Buckshot Roulette","J63","187"],["Cup Head","J266","188"],
+["Slime Rancher","J64","186"],["FNAF: Pizza Sim","J1","1"],["Baseball Bros","J265","2"],["A Dance of Fire and Ice","J3","3"],["Smashy Kart","J264","4"],
+["Deepest Sword","J263","8"],["Tomodachi Life","J5","9"],["FNAF: Sister Location","J6","10"],["Fallout","J7","11"],["Rocket League","J262","12"],
+["Street Fighter II","J261","13"],["Bad Piggies","J10","16"],
+["Among Us (real)","https://ud-gles3games.shared-osj.k8s.n2i.io/?deeplinksURI=null%3A%2F%2F&deeplinksApp=com.innersloth.spacemafia&naturalOrientation=landscape&forcedNaturalOrientation&autofitOnConnect&jitterBufferMin=0&deeplinksService=true&backOnDisconnected=true&disconnectedMessage=null&api=%7B%22back%22%3Afalse%7D&title=Among+Us","17"],
+["Yandere Simulator","J12","18"],["Quake III","d14","20"],["10 Minutes Till Dawn","J15","21"],["Nubby's Number Factory","J17","23"],["Death Run 3D","J19","25"],
+["PaRappa The Rapper","J22","27"],["Hollow Knight","d23","28"],["Binding of Isaac WOTL","d24","29"],["Angry Birds","d29","34"],["FNAF: World","J30","36"],
+["Solar Smash","d31","37"],["Idle Mining Empire","J260","37"],["Bounce Masters","J33","39"],["Raft","J35","41"],["Slender","J37","43"],
+["Kindergarten 3","d39","45"],["Kindergarten 2","d40","46"],["Kindergarten","d41","47"],["Granny 3","J259","48"],["Granny 2","J258","49"],["Granny","J257","50"],
+["Baldi's Basics","d43","52"],["Candy Crush","J45","54"],["Geometry Dash","J46","55"],["That's Not My Neighbor","J47","56"],["ULTRAKILL","d48","57"],
+["WebFishing","J49","58"],["Super Falling Fred","J256","59"],["Pokemon Emerald","J255","62"],
+["Impossible Quiz 2","https://xoriushourz.github.io/ImpossibleQuiz2/","63"],
+["Super Smash Flash 2","J253","64"],["Idle Breakout","J252","65"],["Gun Mayhem 2","J251","66"],["Gun Mayhem","J250","67"],["Big Tower Tiny Square","J249","68"],
+["Big Tower Tiny Square 2","J248","69"],["Pokemon Firered","J247","72"],["Stake Mines","J246","73"],["Blumgi Rocket","J245","74"],["Raft Wars 2","J244","75"],
+["8Ball Pool","J243","79"],
+["Escape Road","https://raw.githack.com/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/master/games/242.html","81"],
+["OvO","J241","82"],["Fruit Ninja","J240","84"],
+["They're Coming","https://raw.githack.com/NoahsAmazingTutoringHelp/Noahs-Calculus-Tutor/d689b42d2c441f234879d5e4da51fc61f07b078d/games/52.html","86"],
+["Flappy Bird","J239","87"],["Recoil","J238","88"],["Twitch Tetris","https://godlover89.github.io/Twitch-Tetris/","89"],["Ultimate Car Driving","J237","90"],
+["Crazy Cattle 3D","J236","91"],["Run 3","J235","92"],["Vex 8","J234","93"],["Apple Shooter","J233","94"],["Running Fred","J232","95"],["Jelly Truck","J230","97"],
+["Rooftop Snipers 2","J229","98"],["Hole.io","J228","100"],["Wrassling","J227","102"],["Level Devil","J225","105"],["Temple Run 2","J224","106"],
+["Boxing Live 2","J223","107"],["Super Mario 64","J222","109"],["Wheelie Bike 2","J221","111"],["Bloxorz","J219","113"],["World's Hardest Game","J218","115"],
+["Impossible Quiz","J217","117"],["Stickman Hook","J216","118"],["Rio Rex","J215","119"],["Stacktris","J214","123"],["Plinko","J213","125"],
+["Blocky Snakes","J212","127"],["Crossy Road","J211","128"],["Happy Room","J210","129"],["Zombocalypse 2","J209","131"],["Backrooms","J208","134"],
+["Getaway Shootout","J207","135"],["Snow Rider 3D","J206","136"],["Gladihoppers","J205","137"],["Paper.io 2","J204","138"],["Poly Track","J203","139"],
+["Club Penguin","https://play.cplegacy.com/","140"],["Ragdoll Hit","J202","142"],["Gun Spin","J201","143"],["Subway Surfers","J200","145"],["Block Blast","J199","146"],
+["Plants vs Zombies","J197","148"],["Drift Boss","J196","150"],["Friday Night Funkin","J195","151"],["COD Nazi Zombies Portable","J194","152"],
+["Adventure Capitalist","J193","153"],["1v1.lol","d313","154"],["Ragdoll Archers","J192","155"],["Retro Bowl","J191","158"],["Half Life","J190","159"],
+["Jetpack Joyride","J189","160"],["Bloons TD 4","J188","161"],["Sand Game","J187","162"],["FNAF","J166","164"],["FNAF 2","J167","165"],["FNAF 3","J168","166"],
+["FNAF 4","J169","167"],["Tiny Fishing","J185","169"],["Chrome Dino","J184","170"],
+["Dodge Ball","https://cdn.jsdelivr.net/gh/NoahsAmazingTutoringHelp/dskadlwasdmw-a@main/Dodge%20Ball%20(4).html","171"],
+["Age of War 2","J183","172"],["Slope","J182","175"],["Sprinter","https://noahsamazingtutoringhelp.github.io/sprinter/","176"],["Cookie Clicker","J181","177"],
+["Bitlife","J180","178"],["Drift Hunters","J179","179"],["Cut The Rope","J178","180"],
+["Sort The Court","https://noahsamazingtutoringhelp.github.io/skdpiwjamoksld/","181"],
+["Tomb of the Mask","J177","182"],["Wordle","J176","183"],["Monkey Mart","J175","184"],
+["Thorns and Balloons","https://noahsamazingtutoringhelp.github.io/ScienceStudyBuddy/","144"]
+        ];
+        return R.map(function (r) {
+            var u = r[1], i = r[2];
+            if (/^J\d+$/.test(u)) u = J + u.slice(1) + '.html';
+            else if (/^[a-e]\d+$/.test(u)) u = G[u.charAt(0)] + u.slice(1) + (HTML[u.charAt(0)] ? '.html' : '');
+            if (/^\d+p?$/.test(i)) i = I + parseInt(i, 10) + (/p$/.test(i) ? '.png' : '.jpg');
+            return { title: r[0], url: u, image: i };
+        });
+    })();
+    </script>
+
+    <script>
         const container = document.getElementById('container');
         const zoneViewer = document.getElementById('zoneViewer');
         let zoneFrame = document.getElementById('zoneFrame');
         const searchBar = document.getElementById('searchBar');
+        const providerBar = document.getElementById('providerBar');
 
-        let currentLibrary = 'fruits';
-        let fruitsZonesURL = "https://cdn.jsdelivr.net/gh/school-rgb/fruti-games-@main/game.json";
-        const fruitsCoverURL = "https://cdn.jsdelivr.net/gh/school-rgb/COVER@main";
-        const fruitsHtmlURL = "https://cdn.jsdelivr.net/gh/school-rgb/html@main";
+        /* ================= PROVIDERS =================
+           Add a new provider by adding an entry here.
+           type "json"   -> fetches a zones.json style list ({id, name, cover, url, author})
+           type "script" -> loads a local JS file that defines a global array (see loadNoah)
+        ============================================== */
+        const PROVIDERS = {
+            fruit: {
+                label: 'Fruit',
+                type: 'json',
+                zonesURL: "https://cdn.jsdelivr.net/gh/school-rgb/fruti-games-@main/game.json",
+                coverURL: "https://cdn.jsdelivr.net/gh/school-rgb/COVER@main",
+                htmlURL: "https://cdn.jsdelivr.net/gh/school-rgb/html@main",
+                shaRepo: "school-rgb/fruti-games-"
+            },
+            noah: {
+                label: 'Noah Games',
+                type: 'script',
+                scriptSrc: 'noahgames.js',   // the file that contains: const NOAH_GAMES = [ ... ];
+                globalName: 'NOAH_GAMES'
+            },
+            gnmath: {
+                label: 'gn-math',
+                type: 'json',
+                zonesURL: "https://cdn.jsdelivr.net/gh/freebuisness/assets@main/zones.json",
+                coverURL: "https://cdn.jsdelivr.net/gh/freebuisness/covers@main",
+                htmlURL: "https://cdn.jsdelivr.net/gh/freebuisness/html@main"
+            }
+        };
 
-        let zones = [];
+        let currentProvider = 'all';
+        try {
+            const saved = localStorage.getItem('gh-provider');
+            if (saved === 'all' || PROVIDERS[saved]) currentProvider = saved;
+        } catch (e) {}
+
+        let allZones = [];   // every game from every provider that loaded
+        let zones = [];      // games for the currently selected provider
+        const providerCounts = {};
 
         // Games run in a sandbox WITHOUT "allow-top-navigation": a game can no longer redirect or
         // replace the whole page (frame-busting scripts just fail quietly), so the "Leave site?"
@@ -356,10 +596,12 @@
             const urlParams = new URLSearchParams(window.location.search);
             const gameId = urlParams.get('id');
 
+            renderProviderBar();
             await listZones();
 
             if (gameId) {
-                let foundZone = zones.find(z => z.id + '' === gameId);
+                let foundZone = allZones.find(z => z.uid === gameId) ||
+                                allZones.find(z => z.id + '' === gameId); // old links without a provider prefix
                 if (foundZone) {
                     document.body.classList.add('app-fullscreen-mode');
                     openZone(foundZone);
@@ -367,48 +609,183 @@
             }
         });
 
-        async function listZones() {
-            try {
-                container.innerHTML = "Loading...";
-                let targetURL = fruitsZonesURL;
-                
+        /* ---------- Loading each provider ---------- */
+        function normalize(list, key) {
+            return list
+                .filter(z => z && z.url && z.name)
+                .map(z => Object.assign({}, z, { provider: key, uid: key + ':' + z.id }));
+        }
+
+        async function loadJsonProvider(key) {
+            const p = PROVIDERS[key];
+            let targetURL = p.zonesURL;
+
+            // Fruit: pin to the latest commit so the list is never served stale from the CDN
+            if (p.shaRepo) {
                 try {
-                    let sharesponse = await fetch("https://api.github.com/repos/school-rgb/fruti-games-/commits?t=" + Date.now());
+                    let sharesponse = await fetch("https://api.github.com/repos/" + p.shaRepo + "/commits?t=" + Date.now());
                     if (sharesponse && sharesponse.status === 200) {
                         let shajson = await sharesponse.json();
                         let sha = shajson[0]['sha'];
-                        if (sha) {
-                            targetURL = `https://cdn.jsdelivr.net/gh/school-rgb/fruti-games-@${sha}/game.json`;
-                        }
+                        if (sha) targetURL = "https://cdn.jsdelivr.net/gh/" + p.shaRepo + "@" + sha + "/" + p.zonesURL.split('@main/')[1];
                     }
                 } catch (error) {}
-
-                const response = await fetch(targetURL + "?t=" + Date.now());
-                zones = await response.json();
-                zones.sort((a, b) => a.name.localeCompare(b.name));
-
-                displayZones(zones);
-            } catch (error) {
-                console.error(error);
-                container.innerHTML = `Error loading zones: ${error}`;
             }
+
+            const response = await fetch(targetURL + "?t=" + Date.now());
+            if (!response.ok) throw new Error(key + " list failed (" + response.status + ")");
+            return normalize(await response.json(), key);
+        }
+
+        // Noah's games live in a plain JS file (const NOAH_GAMES = [{title, url, image}, ...]).
+        // It is loaded with a script tag, then converted into the same shape as the other providers.
+        function loadScriptProvider(key) {
+            const p = PROVIDERS[key];
+            return new Promise((resolve, reject) => {
+                const read = () => {
+                    let src;
+                    try { src = (new Function('return typeof ' + p.globalName + ' !== "undefined" ? ' + p.globalName + ' : null'))(); } catch (e) { src = null; }
+                    if (!Array.isArray(src)) return reject(new Error(p.globalName + " not found"));
+                    resolve(normalize(src.map((g, i) => ({
+                        id: i,
+                        name: g.title,
+                        url: g.url,
+                        cover: g.image,
+                        author: "Noah's Games"
+                    })), key));
+                };
+                if (typeof window[p.globalName] !== 'undefined' || (function () { try { return (new Function('return typeof ' + p.globalName + ' !== "undefined"'))(); } catch (e) { return false; } })()) {
+                    return read();
+                }
+                const s = document.createElement('script');
+                s.src = p.scriptSrc + "?t=" + Date.now();
+                s.onload = read;
+                s.onerror = () => reject(new Error("Could not load " + p.scriptSrc));
+                document.head.appendChild(s);
+            });
+        }
+
+        /* "All" shows each game once, even when several providers have it.
+           Games match by name (ignoring case, spaces and punctuation); the first provider listed wins. */
+        function gameKey(name) {
+            return String(name).toLowerCase().normalize('NFKD')
+                .replace(/[^a-z0-9]+/g, '').replace(/^the/, '');
+        }
+        function uniqueZones(list) {
+            const seen = new Set();
+            return list.filter(z => {
+                const k = gameKey(z.name);
+                if (!k) return true;
+                if (seen.has(k)) return false;
+                seen.add(k);
+                return true;
+            });
+        }
+
+        async function listZones() {
+            container.innerHTML = '<div class="status-msg">Loading...</div>';
+            const keys = Object.keys(PROVIDERS);
+
+            const results = await Promise.allSettled(keys.map(k =>
+                PROVIDERS[k].type === 'script' ? loadScriptProvider(k) : loadJsonProvider(k)
+            ));
+
+            allZones = [];
+            results.forEach((r, i) => {
+                const key = keys[i];
+                if (r.status === 'fulfilled') {
+                    providerCounts[key] = r.value.length;
+                    allZones = allZones.concat(r.value);
+                } else {
+                    providerCounts[key] = 0;
+                    console.error("Provider failed:", key, r.reason);
+                }
+            });
+
+            allZones.sort((a, b) => a.name.localeCompare(b.name));
+            providerCounts.all = uniqueZones(allZones).length;
+
+            renderProviderBar();
+            applyProviderFilter();
+
+            if (allZones.length === 0) {
+                container.innerHTML = '<div class="status-msg">Error loading games. Check your connection and refresh.</div>';
+            }
+        }
+
+        /* ---------- Provider picker ---------- */
+        function renderProviderBar() {
+            providerBar.innerHTML = "";
+            const keys = ['all'].concat(Object.keys(PROVIDERS));
+            keys.forEach(key => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'provider-btn' + (key === currentProvider ? ' active' : '');
+                btn.textContent = key === 'all' ? 'All' : PROVIDERS[key].label;
+                if (providerCounts[key] !== undefined) {
+                    const c = document.createElement('span');
+                    c.className = 'count';
+                    c.textContent = providerCounts[key];
+                    btn.appendChild(c);
+                }
+                btn.onclick = () => setProvider(key);
+                providerBar.appendChild(btn);
+            });
+        }
+
+        function setProvider(key) {
+            currentProvider = key;
+            try { localStorage.setItem('gh-provider', key); } catch (e) {}
+            renderProviderBar();
+            applyProviderFilter();
+        }
+
+        function applyProviderFilter() {
+            zones = currentProvider === 'all'
+                ? uniqueZones(allZones)
+                : allZones.filter(z => z.provider === currentProvider);
+            filterZones();
+        }
+
+        /* ---------- Rendering ---------- */
+        function resolveGameUrl(u, file) {
+            const p = file && PROVIDERS[file.provider];
+            let out = String(u || '');
+            if (p && p.coverURL) out = out.replace("{COVER_URL}", p.coverURL);
+            if (p && p.htmlURL) out = out.replace("{HTML_URL}", p.htmlURL);
+            return out;
         }
 
         function displayZones(zonesList) {
             container.innerHTML = "";
             zonesList.forEach((file) => {
                 const zoneItem = document.createElement("div");
-                zoneItem.className = "zone-item";
+                zoneItem.className = "zone-item" + (file.provider === 'noah' ? " wide" : "");
                 zoneItem.onclick = () => openZone(file);
+                zoneItem.tabIndex = 0;
+                zoneItem.onkeydown = (ev) => { if (ev.key === 'Enter' && ev.target === zoneItem) openZone(file); };
 
-                const coverImgUrl = file.cover ? file.cover.replace("{COVER_URL}", fruitsCoverURL).replace("{HTML_URL}", fruitsHtmlURL) : '';
+                const coverImgUrl = file.cover ? resolveGameUrl(file.cover, file) : '';
 
                 const wrap = document.createElement("div");
                 wrap.className = "zone-box-wrap";
 
                 const box = document.createElement("div");
                 box.className = "zone-box";
-                box.style.backgroundImage = `url('${coverImgUrl}')`;
+                const hue = [...String(file.name)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) % 360, 0);
+                const showFallback = () => {
+                    box.classList.add("fb");
+                    box.style.backgroundImage = `linear-gradient(135deg, hsl(${hue} 60% 42%), hsl(${(hue + 50) % 360} 60% 20%))`;
+                    box.textContent = String(file.name).charAt(0).toUpperCase();
+                };
+                if (coverImgUrl) {
+                    box.style.backgroundImage = `url('${coverImgUrl.replace(/'/g, "%27")}')`;
+                    const probe = new Image();
+                    probe.onerror = showFallback;
+                    probe.src = coverImgUrl;
+                } else {
+                    showFallback();
+                }
 
                 const installBtn = document.createElement("button");
                 installBtn.className = "install-btn";
@@ -420,19 +797,30 @@
                 };
 
                 wrap.appendChild(box);
-                wrap.appendChild(installBtn);
+                if (currentProvider === 'all') {
+                    const tag = document.createElement("span");
+                    tag.className = "provider-tag";
+                    tag.textContent = PROVIDERS[file.provider].label;
+                    wrap.appendChild(tag);
+                }
 
                 const nameEl = document.createElement("h3");
                 nameEl.className = "zone-name";
                 nameEl.textContent = file.name;
 
                 zoneItem.appendChild(wrap);
-                zoneItem.appendChild(nameEl);
-                container.appendChild(zoneItem);   
+                const info = document.createElement("div");
+                info.className = "zone-info";
+                const kind = document.createElement("small");
+                kind.className = "zone-kind";
+                kind.textContent = "Game";
+                info.append(nameEl, kind, installBtn);
+                zoneItem.appendChild(info);
+                container.appendChild(zoneItem);
             });
 
             if (container.innerHTML === "") {
-                container.innerHTML = "No zones found.";
+                container.innerHTML = '<div class="status-msg">No games found.</div>';
             }
         }
 
@@ -440,6 +828,21 @@
             const query = searchBar.value.toLowerCase();
             const filteredZones = zones.filter(zone => zone.name.toLowerCase().includes(query));
             displayZones(filteredZones);
+        }
+
+        /* jsDelivr serves .html files as plain text, so loading one straight into an iframe
+           shows the source code. For those, fetch the HTML and run it inside the frame instead. */
+        function isJsdelivrHtml(u) {
+            try {
+                const x = new URL(u);
+                return x.hostname === 'cdn.jsdelivr.net' && /\.html?$/i.test(decodeURIComponent(x.pathname));
+            } catch (e) { return false; }
+        }
+
+        function withBase(html, u) {
+            const dir = u.replace(/[?#].*$/, '').replace(/[^/]*$/, '');
+            const tag = '<base href="' + dir + '">';
+            return /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, m => m + tag) : tag + html;
         }
 
         function openZone(file) {
@@ -450,23 +853,26 @@
                 zoneViewer.appendChild(zoneFrame);
             }
 
-            if (file.url.startsWith("http")) {
+            if (file.url.startsWith("http") && !isJsdelivrHtml(file.url)) {
                 zoneFrame.src = file.url;
             } else {
-                const url = file.url.replace("{COVER_URL}", fruitsCoverURL).replace("{HTML_URL}", fruitsHtmlURL);
-                
-                fetch(url + "?t=" + Date.now())
+                const url = resolveGameUrl(file.url, file);
+                const isAbs = /^https?:/i.test(url);
+
+                fetch(isAbs ? url : url + "?t=" + Date.now())
                     .then(response => {
                         if (!response.ok) throw new Error("File not found (404)");
                         return response.text();
                     })
                     .then(html => {
                         html = html.replace(/<script>\s*\(function\(ykJYJgqRQvLQ[\s\S]*?<\/script>/g, '');
+                        if (isAbs) html = withBase(html, url);
                         zoneFrame.contentDocument.open();
                         zoneFrame.contentDocument.write(html);
                         zoneFrame.contentDocument.close();
                     })
                     .catch(() => {
+                        const safeName = String(file.name).replace(/[<>&"']/g, '');
                         const fallbackHtml = `
                             <!DOCTYPE html>
                             <html lang="en">
@@ -474,14 +880,14 @@
                                 <meta charset="UTF-8">
                                 <style>
                                     *, body { font-family: 'GNFFont', sans-serif !important; }
-                                    body { background: transparent; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+                                    body { background: #000000; color: #ffffff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
                                     h1 { color: #fc2651; font-size: 24px; }
                                     p { color: #8e8e93; font-size: 15px; }
                                 </style>
                             </head>
                             <body>
                                 <h1>Game File Missing</h1>
-                                <p>The game file for "<strong>${file.name}</strong>" could not be found.</p>
+                                <p>The game file for "<strong>${safeName}</strong>" could not be found.</p>
                             </body>
                             </html>
                         `;
@@ -492,28 +898,28 @@
             }
 
             document.getElementById('zoneName').textContent = file.name;
-            document.getElementById('zoneId').textContent = file.id;
+            document.getElementById('zoneId').textContent = file.uid;
             document.getElementById('zoneAuthor').textContent = "by " + (file.author || "Unknown");
             setInstallLabel(document.getElementById('installCurrentBtn'), file);
-            
+
             zoneViewer.style.display = "flex";
-            
+
             try {
                 const historyUrl = new URL(window.location);
-                historyUrl.searchParams.set('id', file.id);
+                historyUrl.searchParams.set('id', file.uid);
                 history.pushState(null, '', historyUrl.toString());
             } catch(error){}
         }
 
         function aboutBlank() {
             const newWindow = window.open("about:blank", "_blank");
-            let targetZone = zones.find(zone => zone.id + '' === document.getElementById('zoneId').textContent);
+            let targetZone = allZones.find(zone => zone.uid === document.getElementById('zoneId').textContent);
             if (!targetZone) return;
 
             if (targetZone.url.startsWith("http")) {
                 if (newWindow) newWindow.location.href = targetZone.url;
             } else {
-                let zone = targetZone.url.replace("{COVER_URL}", fruitsCoverURL).replace("{HTML_URL}", fruitsHtmlURL);
+                let zone = resolveGameUrl(targetZone.url, targetZone);
                 fetch(zone + "?t=" + Date.now()).then(response => response.text()).then(text => {
                     text = text.replace(/<script>\s*\(function\(ykJYJgqRQvLQ[\s\S]*?<\/script>/g, '');
                     if (newWindow) {
@@ -568,13 +974,9 @@
             btn.textContent = isInstalled(file) ? 'Update' : 'Install';
         }
 
-        function resolveGameUrl(u) {
-            return String(u || '').replace("{COVER_URL}", fruitsCoverURL).replace("{HTML_URL}", fruitsHtmlURL);
-        }
-
         // Builds the game's full HTML code (what the OS stores and runs).
         async function buildGameHtml(file) {
-            const url = resolveGameUrl(file.url);
+            const url = resolveGameUrl(file.url, file);
 
             // Games hosted on another site: wrap them in a full-window frame so any kind of page runs.
             if (/^https?:/i.test(file.url)) {
@@ -630,7 +1032,7 @@
             btn.textContent = 'Installing...';
             try {
                 const html = await buildGameHtml(file);
-                const icon = file.cover ? resolveGameUrl(file.cover) : '';
+                const icon = file.cover ? resolveGameUrl(file.cover, file) : '';
                 await sendToOS({ name: file.name, icon: icon, html: html });
                 btn.classList.remove('busy');
                 btn.classList.add('done');
@@ -646,7 +1048,7 @@
 
         function installCurrent() {
             const id = document.getElementById('zoneId').textContent;
-            const file = zones.find(z => z.id + '' === id);
+            const file = allZones.find(z => z.uid === id);
             if (file) installZone(file, document.getElementById('installCurrentBtn'));
         }
         /* =============== END INSTALL GAME TO FRUIT-OS =============== */
